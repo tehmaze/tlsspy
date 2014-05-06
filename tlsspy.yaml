@@ -15,15 +15,6 @@ analyze:
         docs: As recommended by [RFC4492](http://tools.ietf.org/html/rfc4492)
 
 trust:
-  ca_dir:   data/cacerts
+  #ca_dir:   data/cacerts
   #ca_file:  data/ca-bundle.crt
   #certdata: data/certdata.txt
-
-# Data provided by http://safecurves.cr.yp.to/ - choosing safe curves for
-#                                                elliptic-curve cryptography
-unsafe_curves:
-  brainpoolP256r1: weak ECC security
-  brainpoolP384r1: weak ECC security
-  secp256k1: weak ECDLP and ECC security
-  secp256r1: weak ECDLP and ECC security
-  secp384r1: weak ECDLP and ECC security
