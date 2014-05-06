@@ -25,6 +25,9 @@ thead {
 tbody tr {
   border-bottom: 1px solid #ccc;
 }
+th.bits {
+  width: 50px;
+}
 #wrap {
   width: 960px;
   margin: 0px auto;
@@ -381,8 +384,7 @@ tbody tr {
     <thead>
       <tr>
         <th>Cipher</th>
-        <th>Bits</th>
-        <th>&nbsp;</th>
+        <th class="bits">Bits</th>
       </tr>
     </thead>
     <tbody>
@@ -411,13 +413,14 @@ tbody tr {
 {% endif %}
 
   {% if features.elliptic_curves and features.elliptic_curves.curve_type == 'named_curve' %}
-  <h2>Elliptic Curves</h2>
+  <h2>Elliptic Curves support</h2>
 
   <table class="table">
     <thead>
       <tr>
         <th>Curve</th>
         <th>Status</th>
+        <th class="bits">Bits</th>
       </tr>
     </thead>
     <tbody>
@@ -429,7 +432,17 @@ tbody tr {
         {{ name }}
       </th>
       <td>
+        {% if info.reason %}
         {{ info.reason }}
+          {% if info.info %}
+          (<a href="{{ info.info }}">info</a>)
+          {% endif %}
+        {% else %}
+          Good
+        {% endif %}
+      </td>
+      <td>
+        {{ info.key_size }}
       </td>
     </tr>
     {% endfor %}

@@ -1,7 +1,3 @@
-import ssl
-import struct
-import socket
-
 from tlsspy.probe.base import Probe
 from tlsspy.config import CONFIG
 from tlsspy.util import ThreadPool

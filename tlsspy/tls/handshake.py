@@ -378,7 +378,8 @@ class ServerHello(Handshake):
                     self.session_ticket = True
 
                 elif ext_type == ExtensionType.status_request:
-                    print repr(r.get_fixed(ext_size))
+                    r.get_fixed(ext_size)
+                    # FIXME
 
                 elif ext_type == ExtensionType.supports_npn:
                     self.next_protos = self._parse_npn(r.get_fixed(ext_size))
@@ -473,6 +474,7 @@ class ServerKeyExchange(Handshake):
         self.dh_Ys = 0
 
         # ECDH params
+        self.ec_curve_name = None
         self.ec_curve_type = None
         self.ec_curve_a = None
         self.ec_curve_b = None

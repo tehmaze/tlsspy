@@ -160,7 +160,6 @@ class Connection(object):
                 expected_types = HandshakeType.server_hello_done
 
             elif isinstance(message, ServerKeyExchange):
-                print message
                 self.server_key_exchange = message
                 self.server_key_exchange.cipher_suite = self.server_hello.cipher_suite
                 expected_types = (
