@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SSL report for {{ site }}</title>
+    <style type="text/css">
+body {
+  font: 12px Verdana, Helvetica, Arial;
+}
+table.table {
+  width: 100%
+}
+table.table th {
+  text-align: left;
+  font-weight: bold;
+}
+table td, table th {
+  vertical-align: top;
+}
+table.table-tidy th:first-child {
+  width: 150px;
+}
+thead {
+  border-bottom: 2px solid #ccc;
+}
+tbody tr {
+  border-bottom: 1px solid #ccc;
+}
+#wrap {
+  width: 960px;
+  margin: 0px auto;
+}
+.alert {
+  background-repeat: no-repeat;
+  background-position: 5px 5px;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 1px;
+  margin: 0.5em;
+  padding: 5px 5px 5px 25px;
+}
+.error {
+  border-color: #f00;
+  background-color: #fcc;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAACJVBMVEUAAACEAwI8AAC4SkTNXVN7AACPEQ+HAABXAADvj4P///+GCAiMCwr/08LIXFX/nYtQAACcIyC0PTf/r57TVEf//+CQEhCmLCf/ybOHa14BAACJEhOxQTy/TUbFUEjGUEjCTka3RT+bJiSnNDDDT0fQU0fRUUXIUEa0PjioNDDIUUfNUEW2QDmWHhzETUXLTUKsNTC0PjjBRTwAAAB9AALCSUDKSD2iKieXHRvITEHNSDuvNS+bIR7JS0DORjmyNi+TGBfFQzjINimtMy50AAO5MijCMCScKimqKyXFKBq5NSyJEBC3MCbAMiegKSZ8GBa0LyW8MCWPJyIBAQEAAABPDg2fKiO9LCDALB+oLiVjGRcAAAAAAAAAAAABAAAHAABbFBKKJB+cKSOdKiOPJyFmGhgTAAEAAAAAAAABAAAAAAAAAAAAAAAAAAABAADTUELUTUDUTT/TT0HUT0LTSjzTSTvSRznUTkHUUELffXLggHbVVEfUTD7RUUTXWUz44N777u3aZlrTSDrTTD/22tf66unYX1PUSz300c744uDVUkXRQjTTSz3SRDbxxL/009DLKRnIHQzKJRXONyjTRznTSDnSRTfPOy3MKxvIHg3iiH/nm5THFwbHGQjKJBTLJxfJIA/HGgnTSz7XWEzHGAfIGQjmmJDtta/JHg7IIxTIIhLMLh7ONCXIHQ3IJBXHFgXGFgTIGAfIIRHGJhfIIRLHJRX///8nLWFcAAAAb3RSTlMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPVp/ExqZhFja19fnCRUDd6FQdzd4teZMBEMTYHyrj8UI16/ZOJ+HvPQy80Rpq/oUTu88hOM/dSQcUQazv87hNFgkDDCdThKChiVorFw0EChESDgXpiHFZAAAAAWJLR0QKaND0VgAAAAlwSFlzAABK3AAAStwBP2JiwgAAARhJREFUGNNjYGBkYpaWkZWTV1BUYmFlY2Bg5+BUVlHNLygsUlPX4OLmYeDl09QqLiktKystKdTW4RdgENTVKy8pqaisqi4tqdE3EGIQNqwtKSmtq29obCopaTYyZjAxLQQKVLe0tpWWlJSYmTNYWLYDGRUdnV3dTT0lVtYMNrbtJT2lvX39EyZOmjzFzp7BwXHqtOkzZs6aPXHOnLnznJwZXFznL1g4Z86ixXOXLFmy1M2dQcTDc86SJXOWLV8BJFd6iTKIefusmrNkzuo1QP5aXz9xBgkG/4B1S+es3zBn46bAIGNJBobgkNCw8M1bNm2NiIyKjpFiYIiNi45PSExKTklNS8+IZQAC48ysjOzo6JzcrDxjBgYA2pVg9O8Mw98AAAAldEVYdGRhdGU6Y3JlYXRlADIwMTQtMDQtMzBUMjM6MTQ6MTcrMDI6MDCr77vrAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE0LTA0LTMwVDIzOjE0OjE3KzAyOjAw2rIDVwAAAABJRU5ErkJggg==);
+}
+.warning {
+  border-color: #fc0;
+  background-color: #ffc;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACM0lEQVR4nKWTX0hTcRTHv797f9uda802sOXmzJWrkZEURK4/QlJElqEhJGG99NBL2xWHDt1oBQX2kES1hxAhoqDwIcKHlEKFWq0SiV56CAqDiKJ0m7Ntd7v39BaYkxIPnKfz5cOXL9/DiAgrGb7UIRwK2znXjSaTiawkSc19V/q+LAtgs9luHm/cv7VAgnb3wcOrANqKColo0XZ3BZ3xeLwwef8MzU01UywWywQ6A95iWqEY1OGwj9XWbBYdth9QVRU7amsMFqtl8L8c9Pb0tr+belOYHj5FDmcluTZWU+rDAL2Kv8z5ff6T/3Tgdruj7kqLqCkz4JyDNA263CNs27JO7/F4on/rFwAi5y9cajpy0Pz9eQACB+bTacylEpCMeki/BtDaeszcIXdEiwLCobDd5VrfWapLgLM0ysqmANKwoaocTB0HUwZhNf8UPB7PaVmWnYsAnPN7LY37SmbinbBZJ2CQvsJiKUVFhRUomQWM3yBqZ3Gi7dAqBjawIMTuruDe8aejSvb9Dco90ZE2CaK3oNQnTnOfOdEsiLIgUiXK52/RyMjjjOyX9/wJ0WAw3N69a7tOnb4O0aiCCYDCgMPtOyFHmgAjAP0aQHCD8zE0NNQZJEkaAgAxm8mFjh6oaylXXwgsOQTd6gIYB0QTcGe4AvXej/DWFwBWDWATADsEYS0kqUrf338tj2Cw57WSSdNyJ5/Pke+c7xkXBZaKXLw8X7RlAMAY2BIFNJlMClvpO/8G8rA1fYkIinMAAAAASUVORK5CYII=);
+}
+.standout {
+  font-weight: bold;
+}
+.status-good {
+  color: #080;
+}
+.status-unknown, .status-warning {
+  color: #f80;
+}
+.status-error {
+  color: #f00;
+}
+.shadow {
+  color: #666;
+}
+  </style>
+</head>
+<body>
+<div id="wrap">
+  <h1>SSL report for {{ site }}</h1>
+
+  <h2>Overview</h2>
+
+{% if errors or warnings %}
+  {% for error in errors %}
+  <div class="alert error">{{ error }}</div>
+  {% endfor %}
+  {% for warning in warnings %}
+  <div class="alert warning">{{ warning }}</div>
+  {% endfor %}
+{% else %}
+  <em>No apparent issues!</em>
+{% endif %}
+
+  <h2>Authentication</h2>
+
+{% set cert=report.certificates[0] %}
+{% set pkey=cert.public_key %}
+{% set akey=analysis.public_keys[0] %}
+  <table class="table table-tidy">
+    <tr>
+      <th>Valid for</th>
+      <td>{{ cert.subject.commonName }}</td>
+    </tr>
+{% if cert.subject_alternative -%}
+    <tr>
+      <th>&hellip; and also for</th>
+      <td>{{ cert.subject_alternative|join(", ") }}</td>
+    </tr>
+{%- endif %}
+    <tr>
+      <th>Valid from</th>
+      <td>{{ cert.not_before }}</td>
+    </tr>
+    <tr>
+      <th>Valid until</th>
+      <td>{{ cert.not_after }}</td>
+    </tr>
+    <tr>
+      <th>Expiry</th>
+      {% if analysis.expiry[0].status != 'good' %}
+      <td class="status-error">{{ analysis.expiry[0].reason }}</td>
+      {% else %}
+      <td>Certificate date is valid</td>
+      {% endif %}
+    </tr>
+    <tr>
+      <th>Encryption key</th>
+      <td class="status status-{{ akey.status }}" title="{{ akey.reason }}">
+        {{ pkey.type }} {{ pkey.bits }} bits
+      </td>
+    </tr>
+    <tr>
+      <th>Issuer</th>
+      <td>{{ cert.issuer.commonName }}</td>
+    </tr>
+    <tr>
+      <th>Signature algorithm</th>
+      <td>{{ cert.signature_algorithm }}</td>
+    </tr>
+    <tr>
+      <th>Data</th>
+      <td><pre>{{ cert.data }}</pre></td>
+    </tr>
+  </table>
+
+  <h2>Chain</h2>
+
+{% for cert in report.certificates %}
+{% set pkey=cert.public_key %}
+{% set akey=analysis.public_keys[0] %}
+  <h3>#{{ loop.index }} {{ cert.subject.commonName }}</h3>
+  <table class="table table-tidy">
+    <tr>
+      <th>Subject</th>
+      <td>
+        {{ cert.subject.commonName }}<br />
+        <code class="shadow">{{ cert.subject_hash }}</code>
+      </td>
+    </tr>
+    <tr>
+      <th>Valid from</th>
+      <td>{{ cert.not_before }}</td>
+    </tr>
+    <tr>
+      <th>Valid until</th>
+      <td>{{ cert.not_after }}</td>
+    </tr>
+    <tr>
+      <th>Encryption key</th>
+      <td class="status status-{{ akey.status }}" title="{{ akey.reason }}">
+        {{ pkey.type }} {{ pkey.bits }} bits
+      </td>
+    </tr>
+    <tr>
+      <th>Issuer</th>
+      <td>
+        {{ cert.issuer.commonName }}<br />
+        <code class="shadow">{{ cert.issuer_hash }}</code>
+      </td>
+    </tr>
+    <tr>
+      <th>Signature algorithm</th>
+      <td>{{ cert.signature_algorithm }}</td>
+    </tr>
+  </table>
+{% endfor %}
+
+  <h2>Trust path</h2>
+
+  <table class="table table-tidy">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Status</th>
+        <th>&nbsp;</th>
+        <th>Subject</th>
+      </tr>
+    </thead>
+    <tbody>
+{% for trust in analysis.trust %}
+  {% set cert = report.certificates[loop.index0] %}
+      <tr>
+        <th>{{ loop.index }}</th>
+        <td class="status status-{{ trust.status }}">{{ trust.reason }}</td>
+        <td>{% if cert.sent_by_server %}Sent by server{% else %}In trust store{% endif %}</td>
+        <td>
+          {% if cert.subject.commonName %}
+            {{ cert.subject.commonName }}
+          {% elif cert.subject.organizationalUnitName  %}
+            {{ cert.subject.organizationalUnitName }}
+          {% else %}
+            {{ cert.subject.organizationName }}
+          {% endif %}
+        </td>
+      </tr>
+{% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Protocol support</h2>
+
+{% if analysis.protocols %}
+  <table class="table table-tidy">
+    <thead>
+      <tr>
+        <th>Protocol</th>
+        <th>Status</th>
+        <th>Enabled</th>
+      </tr>
+    </thead>
+    <tbody>
+  {% for item in analysis.protocols %}
+  {% set name = item.keys()[0] %}
+  {% set info = item.values()[0] %}
+      <tr class="status status-{{ info.status }}">
+        <th>{{ name }}</th>
+        <td>{{ info.reason }}</td>
+        <td>{% if info.available %}Yes{% else %}No{% endif %}</td>
+      </tr>
+  {% endfor %}
+    </tbody>
+  </table>
+
+{% else %}
+  <em>No protocols were discovered</em>
+{% endif %}
+
+  <h2>Protocol features</h2>
+
+  <table class="table table-tidy">
+    <tr>
+      <th>Secure renegotiation</th>
+      {% if features.secure_renegotiation %}
+      <td class="status-good">Yes</td>
+      {% else %}
+      <td class="status-error">No</td>
+      {% endif %}
+    </tr>
+    <tr>
+      <th>TLS compression</th>
+      {% if features.compression %}
+      <td class="status-warning">Yes</td>
+      {% else %}
+      <td class="status-good">No</td>
+      {% endif %}
+    </tr>
+    <tr>
+      <th>Server Name Indication (SNI)</th>
+      <td>
+      {% if features.servername %}
+      Yes ({{ features.servername }})
+      {% else %}
+      No
+      {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <th>BEAST attack</th>
+      <td class="status-{{ report.weakness.beast.status }}">
+        {% if report.weakness.beast.exists %}Yes{% else %}No{% endif %},
+        {{ report.weakness.beast.reason }}
+      </td>
+    </tr>
+    <tr>
+      <th>CRIME attack</th>
+      <td class="status-{{ report.weakness.crime.status }}">
+        {% if report.weakness.crime.exists %}Yes{% else %}No{% endif %},
+        {{ report.weakness.crime.reason }}
+      </td>
+    </tr>
+    <tr>
+      <th>Heartbleed attack</th>
+      <td class="status-{{ report.weakness.heartbleed.status }}">
+        {% if report.weakness.heartbleed.exists %}Yes{% else %}No{% endif %},
+        {{ report.weakness.heartbleed.reason }}
+      </td>
+    </tr>
+    <tr>
+      <th>Forward secrecy</th>
+      {% if features.forward_secrecy %}
+      <td class="status-good">Yes</td>
+      {% else %}
+      <td class="status-warning">No</td>
+      {% endif %}
+    </tr>
+    <tr>
+      <th>Next Protocol Negotiation</th>
+      <td>
+      {% if features.next_protos %}
+        Yes, <code class="shadow">{{ features.next_protos|join(", ") }}</code>
+      {% else %}
+        No
+      {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <th>Session resumption</th>
+      {% if features.session %}
+        {% if features.session_resumed %}
+      <td class="status-good">
+        Yes,
+        <span class="shadow">
+          {{ features.session_id|length }} byte Session ID was accepted
+        </span>
+        {% else %}
+      <td class="status-error standout">
+        No, Session ID assigned but not accepted
+        {% endif %}
+      {% else %}
+      No
+      {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <th>Session tickets</th>
+      <td>
+      {% if features.session_ticket %}
+      Yes
+      {% else %}
+      No
+      {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <th>Heartbeat</th>
+      <td>
+      {% if features.heartbeat %}
+      Yes
+      {% else %}
+      No
+      {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <th>Elliptic Curve</th>
+      <td>{% if features.elliptic_curves %}Yes{% else %}No{% endif %}</td>
+    </tr>
+    {% if features.elliptic_curves %}
+    <tr>
+      <th>Curve Point Formats</th>
+      <td>
+        Yes,
+        <code class="shadow">{{ features.elliptic_curves.point_format|join(", ") }}</code>
+      </td>
+    </tr>
+    {% endif %}
+    <tr>
+      <th>Version intolerance</th>
+      {% if analysis.protocol_intolerance %}
+      <td>
+        <span class="standout">
+          {{ analysis.protocol_intolerance|join(', ') }}
+        </span>
+        (<a href="http://www.ietf.org/mail-archive/web/tls/current/msg10657.html">info</a>)
+      </td>
+      {% else %}
+      <td class="status-good">No</td>
+      {% endif %}
+    </tr>
+  </table>
+
+  <h2>
+    Cipher support
+    {% if features.preferred_order %}(in server preferred order){% endif %}
+  </h2>
+
+{% if analysis.ciphers %}
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Cipher</th>
+        <th>Bits</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+  {% for item in analysis.ciphers %}
+  {% set name = item.keys()[0] %}
+  {% set info = item.values()[0] %}
+      <tr class="status status-{{ info.status }}" title="{{ info.reason }}">
+        <th nowrap="nowrap">
+          {{ name }} (<code>{{ info.hex }})</code>
+          {% if info.forward_secrecy %}
+          <span class="shadow">
+            {{ info.forward_secrecy }} FS
+          </span>
+          {% endif %}
+        </th>
+        <td>
+          {{ info.encryption_bits }}
+        </td>
+      </tr>
+  {% endfor %}
+    </tbody>
+  </table>
+
+{% else %}
+  <em>No ciphers were discovered.</em>
+{% endif %}
+
+  {% if features.elliptic_curves and features.elliptic_curves.curve_type == 'named_curve' %}
+  <h2>Elliptic Curves</h2>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Curve</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in analysis.curves %}
+    {% set name = item.keys()[0] %}
+    {% set info = item.values()[0] %}
+    <tr>
+      <th class="status-{{ info.status }}">
+        {{ name }}
+      </th>
+      <td>
+        {{ info.reason }}
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  <h2>Other information</h2>
+
+  <table>
+    <tr>
+      <th>Started</th>
+      <td>{{ analysis.timing.start }}</td>
+    </tr>
+    <tr>
+      <th>Finished</th>
+      <td>{{ analysis.timing.finish }}</td>
+    </tr>
+    <tr>
+      <th>Runtime</th>
+      <td>{{ analysis.timing.runtime }}</td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>
