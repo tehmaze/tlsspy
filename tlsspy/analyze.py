@@ -18,9 +18,9 @@ class Analyzer(object):
         self.probes = load_probes()
         self.load_trust()
 
-        if options.CAdir:
+        if options.CAdir and os.path.isdir(options.CAdir):
             TRUST_STORE.add_trust_from_ca_dir(options.CAdir)
-        if options.CAfile:
+        if options.CAfile and os.path.isfile(options.CAfile):
             TRUST_STORE.add_trust_from_ca_file(options.CAfile)
 
     def analyze(self, address, certificates):
