@@ -103,7 +103,8 @@ class AnalyzeCertificate(Probe):
             if subject_hash in TRUST_STORE:
                 # Certificate should be able to verify itself
                 issuer = TRUST_STORE[subject_hash]
-                if issuer.verify(certificate):
+                status = issuer.verify(certificate)
+                if status is True:
                     log.debug('Issuer "{}" in trust store'.format(
                         issuer_name,
                     ))
@@ -112,6 +113,12 @@ class AnalyzeCertificate(Probe):
                         reason='In trust store',
                     )
                     return
+
+                elif status is None:
+                    yield dict(
+                        status='unknown',
+                        reason='Unable to verify (local issue)',
+                    )
 
             # Untrusted self-signed certificate
             log.debug('Self-signed certificate in chain')
