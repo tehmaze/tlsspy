@@ -6,6 +6,11 @@
 body {
   font: 12px Verdana, Helvetica, Arial;
 }
+div#spam {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+}
 table.table {
   width: 100%
 }
@@ -69,8 +74,16 @@ th.bits {
   </style>
 </head>
 <body>
+<div id="spam">
+  <a href="https://github.com/tehmaze/tlsspy/"><img title="Powered by TLS Spy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKMAAACjBAMAAAAUQrOzAAAAJFBMVEX///+cnJtoaGeCgoE0NDMaGhlOTk22trUAAADS0tHQ0M/R0dC5ZToTAAAAAXRSTlMAQObYZgAAAoxJREFUaN7tmT1rG0EQQK/d3ifDlYovMtcFOQSusx0hUCrpDm1QKVkyqIvxSmHrpEnlWlXuw1oy7tIEkj+XQlJsdYE8g032fsDjMbMzOzsXrGTvuwn+/VP7yG8AMvCaXvP/1Pzlo/lUNe94zTtfQl7zSWsucE2X92hNk85gTTcQA0fTxNERm3SXFe+7cNKtyLYvoUlvW/psmtmILqFMJnA0i5Gcw5XudDlycDTj3NYprGmlKXTS3eVxAie97hxZWPMgXdRz+mxOzuj27vKogpNeaTec0km/nTbopJtimMDRNDa0S1azzKzLYM0ra1604Gi6TJp0NFN8QnIi0hb+FtJ0pQ/7Y7rSR+EYv4UKTTek+I1UqbxCNVsu71xpuCGlZceyST+QUsPRDG1sRT6g7T3XIpuWBGruqp2sdDfkK/2l5vsmXekm2Y2wmGbxCPPmcW5L+E7/YeXW4klvuku6vfen9OhR5Sl8WVZvIxGRFNQsNsm54Peb63f41qP4hG89wga99Sj6MoHf6WEkbs4+gPt4e/8eCT4W30+caHuXRxiLrwfsI0OLnC3Ysxlbmcgpq9m1ob1mo7lI1vOKHoulh4/Fh1/ot1DVSZ/LUtt1Elqzbl3Qmuu0jljNZaFdj9Ucy2xzpZNbj5pOetn/KPS8eZKJoXdI4gb4qsuka1jTDWS72cU0TWxjYVdd7fJzF98hLUU03pDKZIHvNxsDWvP1Od3eT07x9n7o/wB7Ta/pNb2m1/w7zZ/PLppfeU0EqXjkviaDVDxyTxNCKh75UJNCKh75QBNDKh55r8khFY/8owkiFY/caZJIxSO3mihS8ciNJotUPDJY8UjFI4MVj1Q8MljxSMUjgxWPVDwyuPkNrC6Y+on7E6EAAAAASUVORK5CYII="></a>
+</div>
 <div id="wrap">
-  <h1>SSL report for {{ site }}</h1>
+  <h1>
+    TLS report for {{ site }}
+    {% if options.port != 443 %}
+    (port {{ options.port}})
+    {% endif %}
+  </h1>
 
   <h2>Overview</h2>
 
@@ -452,7 +465,7 @@ th.bits {
 
   <h2>Other information</h2>
 
-  <table>
+  <table class="table">
     <tr>
       <th>Started</th>
       <td>{{ analysis.timing.start }}</td>
@@ -464,6 +477,14 @@ th.bits {
     <tr>
       <th>Runtime</th>
       <td>{{ analysis.timing.runtime }}</td>
+    </tr>
+    <tr>
+      <th>Remote address</th>
+      <td><address>{{ options.host }}:{{ options.port }}</address></td>
+    </tr>
+    <tr>
+      <th>Remote hostname</th>
+      <td>{{ options.host_name }}</td>
     </tr>
   </table>
 </div>

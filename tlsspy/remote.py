@@ -44,7 +44,8 @@ def parse_port(port, protocol='tcp'):
         return int(port)
 
 
-def parse_address(address, port=0, protocol='tcp', family=socket.AF_INET):
+def parse_address(address, port=0, protocol='tcp', family=socket.AF_INET,
+                  resolve=False):
     '''
     Returns an address and port number.
 
@@ -55,19 +56,35 @@ def parse_address(address, port=0, protocol='tcp', family=socket.AF_INET):
     >>> parse_address('127.0.0.1:www')
     ('127.0.0.1', 80)
     '''
+
+    parsed_host = None
+    parsed_port = None
+
     if isinstance(address, basestring):
         if ':' in address:
-            host, port = address.split(':', 1)
-            return (parse_host(host, family), parse_port(port))
+            parsed_host, parsed_port = address.split(':', 1)
         else:
-            return (parse_host(address, family), parse_port(port))
+            parsed_host = address
+            parsed_port = port
 
     elif isinstance(address, tuple):
         if len(address) == 1:
-            return (parse_host(address, family), parse_port(port))
+            parsed_host = address[0]
+            parsed_port = port
         else:
-            host, port = address
-            return (parse_host(host), parse_port(port))
+            parsed_host, parsed_port = address
+
+    else:
+        raise ValueError('Unable to parse address {!r} with type {}'.format(
+            address,
+            type(address),
+        ))
+
+    if resolve:
+        parsed_host = parse_host(host)
+
+    parsed_port = parse_port(port)
+    return (parsed_host, parsed_port)
 
 
 class Remote(object):
@@ -97,6 +114,9 @@ class Remote(object):
         else:
             self.socket = socket.create_connection(self.address, self.timeout)
             self.socket.settimeout(self.timeout)
+
+        # Actual socket object
+        self._sock = self.socket._sock
 
     def send_all(self, data):
         total = 0

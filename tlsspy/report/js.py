@@ -6,6 +6,8 @@ from tlsspy.report.base import Report
 
 
 class JSONReport(Report):
+    report_type = 'json'
+
     def render(self, results):
         fd = self.open()
         json.dump(
@@ -34,4 +36,4 @@ class JSONReport(Report):
                 )
             )
 
-Report.register('json', JSONReport)
+Report.register(JSONReport)

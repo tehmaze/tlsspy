@@ -41,6 +41,8 @@ Request for comments:
  * [RFC 6520][rfc-6520]:
    Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)
    Heartbeat Extension
+ * [RFC 6797][rfc-6797]:
+   HTTP Strict Transport Security (HSTS)
  * [RFC 6961][rfc-6961]:
    The Transport Layer Security (TLS) Multiple Certificate Status Request
    Extension
@@ -64,6 +66,7 @@ Request for comments:
 [rfc-6066]: http://tools.ietf.org/html/rfc6066
 [rfc-6091]: http://tools.ietf.org/html/rfc6091
 [rfc-6520]: http://tools.ietf.org/html/rfc6520
+[rfc-6797]: http://tools.ietf.org/html/rfc6797
 [rfc-6961]: http://tools.ietf.org/html/rfc6961
 [rfc-6962]: http://tools.ietf.org/html/rfc6962
 [rfc-7027]: http://tools.ietf.org/html/rfc7027

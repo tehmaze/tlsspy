@@ -1,0 +1,50 @@
+#!/usr/bin/env python2
+
+import sys
+
+
+def run():
+    import argparse
+    from tlsspy.analyze import Analyzer
+    from tlsspy.config import configure
+    from tlsspy.remote import parse_address
+    from tlsspy.report import make_report
+    from tlsspy.log import log
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--config', default='tlsspy.yaml')
+    parser.add_argument('-q', '--quiet', default=False, action='store_true')
+    parser.add_argument('-o', '--output', default='.',
+                        help='Output folder (default: current directory)')
+    parser.add_argument('--CAdir')
+    parser.add_argument('--CAfile')
+    parser.add_argument('addresses', nargs='+')
+
+    options = parser.parse_args()
+
+    if options.quiet:
+        log.quiet()
+
+    configure(options.config)
+    analyzer = Analyzer(options)
+
+    # First parse all addresses
+    addresses = []
+    for address in options.addresses:
+        addresses.append(parse_address(address, port=443))
+
+    for address in addresses:
+        results = []
+        try:
+            result = analyzer.analyze_tcp(address)
+            for report_type in ('html', 'json'):
+                make_report(report_type, address, result)
+        except Exception as error:
+            log.error('Uncaught exception during run: {}'.format(
+                error,
+            ))
+            raise
+
+
+if __name__ == '__main__':
+    sys.exit(run())

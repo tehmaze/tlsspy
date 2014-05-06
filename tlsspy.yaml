@@ -14,6 +14,20 @@ analyze:
         bits: 112
         docs: As recommended by [RFC4492](http://tools.ietf.org/html/rfc4492)
 
+report:
+  # Default file name template, available tokens:
+  # host:           unaltered host part of the address input
+  # host_name:      resolved host name, if host part of the address input is an
+  #                 IP address
+  # ip_address:     first IP address returned when resolving host
+  # port:           unaltered port part of the address input (defaults to 443 if omitted)
+  # port_name:      resolved port name, if found by getservbyport(3)
+  # port_special:   contains "{separator}{port}" if port is not 443/https
+  # separator:      separator as specified below (defaults to "-")
+  # type:           report type (html, json, etc.)
+  template:  "{host}{port_special}.{type}"
+  separator: "-"
+
 trust:
   #ca_dir:   data/cacerts
   ca_file:   /dev/null
