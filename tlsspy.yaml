@@ -16,5 +16,5 @@ analyze:
 
 trust:
   #ca_dir:   data/cacerts
-  #ca_file:  data/ca-bundle.crt
+  ca_file:   /dev/null
   #certdata: data/certdata.txt
