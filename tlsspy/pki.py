@@ -10,7 +10,6 @@ from OpenSSL.crypto import (
     load_certificate,
     FILETYPE_ASN1,
     FILETYPE_PEM,
-    verify,
 )
 from OpenSSL.crypto import Error as SSLError
 from OpenSSL.crypto import verify as SSLVerify
@@ -24,6 +23,13 @@ from tlsspy.asn1_models import (
 )
 from tlsspy.log import log
 from tlsspy.oids import friendly_oid
+
+try:
+    from OpenSSL.crypto import verify
+except ImportError:
+    log.warning('Please upgrade your pyOpenSSL installation, this version has '
+                'no support for certificate verification!')
+    verify = None
 
 
 def hash_name(name):
@@ -265,6 +271,9 @@ class Certificate(Sequence):
 
     def verify(self, certificate):
         '''Meh it sucks having to load OpenSSL; but it's the fastest option.'''
+        if verify is None:
+            return None
+
         vrfy = load_certificate(FILETYPE_ASN1, self.to_der())
         try:
             SSLVerify(
