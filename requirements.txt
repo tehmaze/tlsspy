@@ -1,2 +1,4 @@
+Jinja2
 pyasn1
 pyPOpenSSL
+PyYAML
