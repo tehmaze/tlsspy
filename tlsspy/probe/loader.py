@@ -21,7 +21,7 @@ def load_probe(filename):
         os.path.basename(os.path.splitext(filename)[0]),
     ])
 
-    log.debug('Loading {}'.format(name))
+    log.debug('Loading {0}'.format(name))
     try:
         module = imp.load_module(
             name,
@@ -31,7 +31,7 @@ def load_probe(filename):
         )
         PROBES[name] = getattr(module, 'PROBES', [])
     except Exception, e:
-        log.warning('Loading {} failed "{}"'.format(name, e))
+        log.warning('Loading {0} failed "{1}"'.format(name, e))
         raise
 
 

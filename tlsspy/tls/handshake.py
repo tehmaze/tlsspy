@@ -54,7 +54,7 @@ class Certificate(Handshake):
                 self.certificate_chain = certificates
 
         else:
-            raise AssertionError('Unsupported certificate_type "{}"'.format(
+            raise AssertionError('Unsupported certificate_type "{0}"'.format(
                 self.certificate_type,
             ))
 
@@ -130,7 +130,7 @@ class CertificateStatus(Handshake):
         try:
             self.ocsp_response = parse_ocsp_response(str(r.data))
         except Exception as error:
-            log.error('Error parsing OCSP response: {}'.format(error))
+            log.error('Error parsing OCSP response: {0}'.format(error))
 
 
 class ClientHello(Handshake):
@@ -329,7 +329,7 @@ class ServerHello(Handshake):
             while total != total_size:
                 ext_type = r.get(2)
                 ext_size = r.get(2)
-                log.debug('Parsing extension {} with size {}'.format(
+                log.debug('Parsing extension {0} with size {1}'.format(
                     TLS_EXTENSION_TYPE.get(ext_type, ext_type),
                     ext_size,
                 ))
@@ -385,7 +385,7 @@ class ServerHello(Handshake):
                     self.next_protos = self._parse_npn(r.get_fixed(ext_size))
 
                 else:
-                    log.debug('Extension type {} ({}) not supported'.format(
+                    log.debug('Extension type {0} ({1}) not supported'.format(
                         TLS_EXTENSION_TYPE.get(ext_type, ext_type),
                         ext_type,
                     ))
@@ -441,7 +441,7 @@ class ServerHello(Handshake):
         b = bytearray(0)
         for proto in self.next_protos_advertized:
             if len(proto) > 255 or len(proto) == 0:
-                raise SyntaxError('Invalid protocol size {}; allowed is 0 < x'
+                raise SyntaxError('Invalid protocol size {0}; allowed is 0 < x'
                                   ' < 256'.format(len(proto)))
             b += bytearray([len(proto)]) + bytearray(proto)
         return b
@@ -495,7 +495,7 @@ class ServerKeyExchange(Handshake):
             ))
             return self
         else:
-            log.debug('Parse key exchange message for cipher suite {}'.format(
+            log.debug('Parse key exchange message for cipher suite {0}'.format(
                 cipher_name,
             ))
 
@@ -511,7 +511,7 @@ class ServerKeyExchange(Handshake):
             self.ec_curve_type = r.get(1)
             curve_type = TLS_EC_CURVE_TYPE.get(self.ec_curve_type)
             if curve_type is None:
-                log.debug('Unsupported EC curve type {}'.format(
+                log.debug('Unsupported EC curve type {0}'.format(
                     self.ec_curve_type
                 ))
                 return self
@@ -520,7 +520,7 @@ class ServerKeyExchange(Handshake):
                 self.ec_curve_a = r.get(1)
                 self.ec_curve_b = r.get(1)
                 self.ec_point = r.get(1)
-                log.info('Elliptic Curve {} (a={}, b={}, point={})'.format(
+                log.info('Elliptic Curve {0} (a={1}, b={2}, point={3})'.format(
                     curve_type,
                     self.ec_curve_a,
                     self.ec_curve_b,
@@ -529,7 +529,7 @@ class ServerKeyExchange(Handshake):
 
             elif curve_type == 'named_curve':
                 self.ec_curve_name = r.get(2)
-                log.info('Elliptic Curve {}'.format(
+                log.info('Elliptic Curve {0}'.format(
                     TLS_EC_CURVE_NAME.get(
                         self.ec_curve_name,
                         self.ec_curve_name,
@@ -537,7 +537,7 @@ class ServerKeyExchange(Handshake):
                 ))
 
         else:
-            log.debug('Unsupported key exchange algorithm {}'.format(
+            log.debug('Unsupported key exchange algorithm {0}'.format(
                 cipher_info['key_exchange']
             ))
 

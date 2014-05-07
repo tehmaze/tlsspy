@@ -248,7 +248,7 @@ class Connection(object):
             record_header, r = result
             content_type = record_header.content_type
 
-            log.debug('Received {} record'.format(
+            log.debug('Received {0} record'.format(
                 TLS_CONTENT_TYPE.get(content_type, content_type)
             ))
             if content_type == ContentType.application_data:
@@ -259,10 +259,12 @@ class Connection(object):
                 if content_type == ContentType.alert:
                     Alert().parse(r).throw()
 
-                raise ValueError('Unexpected record type {}, exptected {}'.format(
-                    TLS_CONTENT_TYPE.get(content_type, content_type),
-                    map(TLS_CONTENT_TYPE.get, expected_type)
-                ))
+                raise ValueError(
+                    'Unexpected record type {0}, expected {1}'.format(
+                        TLS_CONTENT_TYPE.get(content_type, content_type),
+                        map(TLS_CONTENT_TYPE.get, expected_type)
+                    )
+                )
 
             # Parse based on content_type
             if content_type == ContentType.alert:
@@ -287,14 +289,16 @@ class Connection(object):
                     sub_type = r.get(1)
                     if sub_type not in secondary_type:
                         raise TypeError(
-                            'Unexpected message {} ({}), expected {}/{}'.format(
-                            sub_type,
-                            TLS_HANDSHAKE_TYPE.get(sub_type, 'unknown'),
-                            map(TLS_HANDSHAKE_TYPE.get, expected_type),
-                            map(TLS_HANDSHAKE_TYPE.get, secondary_type)
-                        ))
+                            'Unexpected message {0} ({1}), '
+                            'expected {2}/{3}'.format(
+                                sub_type,
+                                TLS_HANDSHAKE_TYPE.get(sub_type, 'unknown'),
+                                map(TLS_HANDSHAKE_TYPE.get, expected_type),
+                                map(TLS_HANDSHAKE_TYPE.get, secondary_type)
+                            )
+                        )
 
-                log.debug('... with sub type {}'.format(
+                log.debug('... with sub type {0}'.format(
                     TLS_HANDSHAKE_TYPE.get(sub_type, sub_type)
                 ))
 
@@ -417,11 +421,11 @@ class Connection(object):
             return  # Nothing to do
 
         content_type = message.content_type
-        log.debug('Sending {} record'.format(
+        log.debug('Sending {0} record'.format(
             TLS_CONTENT_TYPE.get(content_type, content_type)
         ))
         if isinstance(message, Handshake):
-            log.debug('... with sub type {}'.format(
+            log.debug('... with sub type {0}'.format(
                 TLS_HANDSHAKE_TYPE.get(message.handshake_type,
                                        message.handshake_type)
             ))

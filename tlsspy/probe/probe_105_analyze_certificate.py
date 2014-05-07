@@ -108,7 +108,7 @@ class AnalyzeCertificate(Probe):
            previously provided certificate in the chain
         3. checking if the certificate is self signed
         '''
-        log.debug('Analyzing {}'.format(certificate.get_subject_str()))
+        log.debug('Analyzing {0}'.format(certificate.get_subject_str()))
 
         subject_hash = certificate.get_subject_hash()
         issuer = certificate.get_issuer()
@@ -137,7 +137,7 @@ class AnalyzeCertificate(Probe):
                 issuer = TRUST_STORE[subject_hash]
                 status = issuer.verify(certificate)
                 if status is True:
-                    log.debug('Issuer "{}" in trust store'.format(
+                    log.debug('Issuer "{0}" in trust store'.format(
                         issuer_name,
                     ))
                     yield dict(
@@ -163,7 +163,7 @@ class AnalyzeCertificate(Probe):
         also_check = []
         if issuer_hash in TRUST_STORE:
             issuer = TRUST_STORE[issuer_hash]
-            log.debug('Issuer "{}" in trust store'.format(issuer_name))
+            log.debug('Issuer "{0}" in trust store'.format(issuer_name))
             if issuer_hash not in self.chain_hash:
                 also_check.append(issuer)
 
@@ -179,7 +179,7 @@ class AnalyzeCertificate(Probe):
                 )
 
         elif issuer_hash in self.chain_hash:
-            log.debug('Issuer {} in trust chain'.format(issuer_name))
+            log.debug('Issuer {0} in trust chain'.format(issuer_name))
             issuer = self.chain[self.chain_hash.index(issuer_hash)]
             if issuer.verify(certificate):
                 yield dict(
@@ -195,7 +195,7 @@ class AnalyzeCertificate(Probe):
         else:
             yield dict(
                 status='error',
-                reason='Issuer {} unknown'.format(issuer_name),
+                reason='Issuer {0} unknown'.format(issuer_name),
             )
 
         for check in also_check:

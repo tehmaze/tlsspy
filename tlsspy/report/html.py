@@ -24,13 +24,13 @@ class HTMLReport(Report):
                 if not 'reason' in values:
                     continue
                 elif values['status'] == 'error':
-                    errors.append('{} {}: {}'.format(
+                    errors.append('{0} {1}: {2}'.format(
                         checks[:-1].replace('_', ' ').capitalize(),
                         name.capitalize(),
                         values['reason']
                     ))
                 elif values['status'] in ['warning', 'uknown']:
-                    warnings.append('{} {}: {}'.format(
+                    warnings.append('{0} {1}: {2}'.format(
                         checks[:-1].replace('_', ' ').capitalize(),
                         name.capitalize(),
                         values['reason']

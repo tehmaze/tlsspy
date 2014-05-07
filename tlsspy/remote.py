@@ -75,7 +75,7 @@ def parse_address(address, port=0, protocol='tcp', family=socket.AF_INET,
             parsed_host, parsed_port = address
 
     else:
-        raise ValueError('Unable to parse address {!r} with type {}'.format(
+        raise ValueError('Unable to parse address {0!r} with type {1}'.format(
             address,
             type(address),
         ))
@@ -102,7 +102,7 @@ class Remote(object):
             if parsed.scheme == 'http':
                 self.proxy = HTTPProxy(parsed.netloc)
             else:
-                raise TypeError('Unsupported proxy method {}'.format(
+                raise TypeError('Unsupported proxy method {0}'.format(
                     parsed.scheme,
                 ))
         else:
@@ -145,7 +145,7 @@ class HTTPProxy(Remote):
         address = parse_address(address)
         self.socket = socket.create_connection(self.address, self.timeout)
         self.socket.settimeout(self.timeout)
-        self.send('CONNECT {}:{} HTTP/1.0\r\n\r\n'.format(
+        self.send('CONNECT {0}:{1} HTTP/1.0\r\n\r\n'.format(
             address[0],
             address[1],
         ))
@@ -153,6 +153,6 @@ class HTTPProxy(Remote):
         print data
         http, status, message = data.splitlines()[0].split(' ', 2)
         if status != '200':
-            raise ValueError('Got HTTP {}: {}'.format(status, message))
+            raise ValueError('Got HTTP {0}: {1}'.format(status, message))
         
         return self

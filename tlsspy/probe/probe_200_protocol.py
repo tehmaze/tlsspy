@@ -127,37 +127,37 @@ class ProtocolSupport(Probe):
                 status['available'] = False
                 status['reason'] = status.get(
                     'reason',
-                    'Not available: {}'.format(error)
+                    'Not available: {0}'.format(error)
                 )
                 protocols.append({name: status})
 
         protocol_intolerance = []
         for version, max_server_version in TLS_VERSION_TOLERANCE.iteritems():
-            name = '{} {}.{}'.format(
+            name = '{0} {1}.{2}'.format(
                 'TLS' if version[0] > 2 else 'SSL',
                 version[0] - 2,
                 version[1],
             )
             try:
                 server_version = self._test_version(address, version)
-                server_name = '{} {}.{}'.format(
+                server_name = '{0} {1}.{2}'.format(
                     'TLS' if server_version[0] > 2 else 'SSL',
                     server_version[0] - 2,
                     server_version[1],
                 )
                 if server_version > max_server_version:
-                    log.debug('Intolerant for version {} (got {} back!?)'.format(
+                    log.debug('Intolerant for version {0} (got {1} !?)'.format(
                         name,
                         server_name,
                     ))
                     protocol_intolerance.append(name)
                 else:
-                    log.debug('Proper response for version {} (got {})'.format(
+                    log.debug('Proper response for version {0} (got {1})'.format(
                         name,
                         server_name,
                     ))
             except Exception as error:
-                log.debug('Intolerant for version {} (got error: {})'.format(
+                log.debug('Intolerant for version {0} (got error: {1})'.format(
                     name,
                     error,
                 ))
@@ -210,7 +210,7 @@ class ProtocolSupport(Probe):
                 raise ValueError('Expected record header')
 
             if content_type != ContentType.handshake:
-                raise SyntaxError('Expected handshake, got {} (0x{:02x})'.format(
+                raise SyntaxError('Expected handshake, got {0} (0x{1:02x})'.format(
                     TLS_CONTENT_TYPE.get(content_type, content_type),
                     content_type,
                 ))
@@ -221,7 +221,7 @@ class ProtocolSupport(Probe):
                 header_size = r.get(2)
                 b = r.get_fixed(header_size)
                 if b[0] != HandshakeType.server_hello:
-                    raise SyntaxError('Expected server hello, got {} (0x{:02x})'.format(
+                    raise SyntaxError('Expected server hello, got {0} (0x{1:02x})'.format(
                         TLS_HANDSHAKE_TYPE.get(b[0], b[0]),
                         b[0]
                     ))

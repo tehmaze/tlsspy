@@ -47,7 +47,7 @@ class RetrieveCertificate(Probe):
             try:
                 self._handshake(secure, CipherSuite.all)
             except Exception as error:
-                log.debug('Long client handshake not supported: {}'.format(
+                log.debug('Long client handshake not supported: {0}'.format(
                     error
                 ))
                 features['long_client_handshake'] = False
@@ -57,16 +57,16 @@ class RetrieveCertificate(Probe):
                 certificates.add(certificate)
 
         except socket.error, e:
-            raise Probe.Skip('network error: {}'.format(e))
+            raise Probe.Skip('network error: {0}'.format(e))
 
-        log.info('Fetched {} certifiates from {}:{}'.format(
+        log.info('Fetched {0} certifiates from {1}:{2}'.format(
             len(certificates),
             address[0],
             address[1],
         ))
 
     def _handshake(self, secure, cipher_suites):
-        log.debug('Selected {} out of {} ciphers'.format(
+        log.debug('Selected {0} out of {1} ciphers'.format(
             len(cipher_suites),
             len(CipherSuite.all),
         ))

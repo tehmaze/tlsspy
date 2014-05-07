@@ -30,31 +30,19 @@ class Analyzer(object):
 
         info = {'tests': [], 'tests_skipped': []}
         for Probe in self.probes:
-            log.debug('Running {}'.format(Probe.__module__))
+            log.debug('Running {0}'.format(Probe.__module__))
             try:
                 probe = Probe(info)
                 probe.probe(address, certificates)
                 info['tests'].append(Probe.__module__)
             except Probe.Skip, r:
-                log.warning('Skip {}: {}'.format(Probe.__module__, r))
+                log.warning('Skip {0}: {1}'.format(Probe.__module__, r))
                 info['tests_skipped'].append(Probe.__module__)
             except Exception, e:
-                print('Oops: {}'.format(e))
+                print('Oops: {0}'.format(e))
                 raise
 
         return info
-        '''
-        try:
-            print json.dumps(
-                info,
-                default=self._json_handler,
-                indent=2,
-                sort_keys=True,
-            )
-        except Exception:
-            import pprint
-            print pprint.pprint(info)
-        '''
 
     def analyze_certificate(self, data, **kwargs):
         certificates = map(parse_certificate,
@@ -76,7 +64,7 @@ class Analyzer(object):
             return str(obj)
         else:
             raise TypeError(
-                'Object of type {} with value {} is not supported'.format(
+                'Object of type {0} with value {1} is not supported'.format(
                     type(obj), repr(obj)
                 )
             )

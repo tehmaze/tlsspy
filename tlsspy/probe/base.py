@@ -44,7 +44,7 @@ class Probe(object):
         self.merge({item: value})
 
     def __repr__(self):
-        return '{}.{}'.format(
+        return '{0}.{1}'.format(
             os.path.basename(os.path.splitext(__file__)[0]),
             self.__class__.__name__,
         )
@@ -65,7 +65,7 @@ class Probe(object):
             remote.connect()
             return Connection(remote)
         except socket.error as error:
-            raise Probe.Skip('Network error: {}'.format(error))
+            raise Probe.Skip('Network error: {0}'.format(error))
 
     def merge(self, collected, base=None):
         '''

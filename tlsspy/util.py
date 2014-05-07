@@ -131,7 +131,7 @@ class ThreadPool(object):
         self._results.join()
 
     def start(self, workers):
-        log.info('Starting {} thread pool workers'.format(workers))
+        log.info('Starting {0} thread pool workers'.format(workers))
         if self._active_threads:
             raise SyntaxError('Already started')
 
@@ -155,7 +155,7 @@ class ThreadPool(object):
             job = jobs.get()
 
             if isinstance(job, ThreadPool.Done):
-                log.debug('[{}] done'.format(
+                log.debug('[{0}] done'.format(
                     threading.currentThread().name,
                 ))
                 # Bye!
@@ -168,7 +168,7 @@ class ThreadPool(object):
             try:
                 result = func(*args)
             except Exception as error:
-                log.error('Uncaught exception in thread worker: {}'.format(
+                log.error('Uncaught exception in thread worker: {0}'.format(
                     error,
                 ))
             else:

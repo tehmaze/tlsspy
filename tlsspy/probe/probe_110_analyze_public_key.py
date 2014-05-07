@@ -35,7 +35,7 @@ class AnalyzePubKey(Probe):
 
         for certificate in certificates:
             public_key = certificate.get_public_key()
-            log.debug('Analyzing {} bit {} key'.format(
+            log.debug('Analyzing {0} bit {1} key'.format(
                 public_key.get_bits(),
                 public_key.get_type(),
             ))
@@ -44,12 +44,12 @@ class AnalyzePubKey(Probe):
             key_bits = public_key.get_bits()
             key_type = public_key.get_type()
             key_conf = self.config.get('key_sizes', {}).get(key_type)
-            key_name = '{} {} bits'.format(key_type, key_bits)
+            key_name = '{0} {1} bits'.format(key_type, key_bits)
             if key_conf:
                 if key_bits < key_conf['bits']:
                     key_info = dict(
                         status='error',
-                        reason='{} bits {} key is less than {}: {}'.format(
+                        reason='{0} bits {1} key is less than {2}: {3}'.format(
                             key_bits,
                             key_type,
                             key_conf['bits'],

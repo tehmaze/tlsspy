@@ -31,8 +31,9 @@ class JSONReport(Report):
             return str(obj)
         else:
             raise TypeError(
-                'Object of type {} with value {} is not supported'.format(
-                    type(obj), repr(obj)
+                'Object of type {0} with value {1!r} is not supported'.format(
+                    type(obj),
+                    obj
                 )
             )
 

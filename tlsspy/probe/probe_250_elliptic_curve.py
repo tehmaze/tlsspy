@@ -43,7 +43,7 @@ class EllipticCurveSupport(Probe):
                    if '_EC' in suite]
 
         if ciphers:
-            log.debug('Discovered {} usable cipher suites using EC'.format(
+            log.debug('Discovered {0} usable cipher suites using EC'.format(
                 len(ciphers),
             ))
             elliptic_curves = TLS_EC_CURVE_NAME.keys()
@@ -65,9 +65,8 @@ class EllipticCurveSupport(Probe):
                 pass
 
         except socket.error as error:
-            raise Probe.Skip('Elliptic Curve Point Format handshake failed: {}'.format(
-                error
-            ))
+            raise Probe.Skip('Elliptic Curve Point Format handshake failed: '
+                             '{0}'.format(error))
 
         # Map out the names of the EC point formats supported by the server
         ec_point_formats = secure.server_hello.ec_point_formats
@@ -141,7 +140,7 @@ class EllipticCurveSupport(Probe):
                 if curve is None:
                     break
                 else:
-                    log.debug('Elliptic Named Curve {} supported'.format(
+                    log.debug('Elliptic Named Curve {0} supported'.format(
                         TLS_EC_CURVE_NAME.get(curve),
                     ))
                     name = TLS_EC_CURVE_NAME.get(curve)
@@ -151,7 +150,7 @@ class EllipticCurveSupport(Probe):
                     })
                     elliptic_curves.remove(curve)
             except Exception as error:
-                log.debug('Error Probing Named Curve: {}'.format(
+                log.debug('Error Probing Named Curve: {0}'.format(
                     error,
                 ))
                 break

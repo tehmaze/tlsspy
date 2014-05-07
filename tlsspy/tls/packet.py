@@ -30,13 +30,13 @@ class Alert(object):
             description = TLS_ALERT_DESCRIPTION[self.description]
             description = description.replace('_', ' ').title()
         else:
-            description = 'Unknown Error {}'.format(self.description)
+            description = 'Unknown Error {0}'.format(self.description)
         if self.level in TLS_ALERT_LEVEL:
             level = TLS_ALERT_LEVEL[self.level]
         else:
             level = 'unknown'
 
-        raise Exception('{} TLS alert: {}'.format(level, description))
+        raise Exception('{0} TLS alert: {1}'.format(level, description))
 
 
 class ChangeCipherSpec(object):

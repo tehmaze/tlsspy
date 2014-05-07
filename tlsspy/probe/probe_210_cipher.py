@@ -107,7 +107,7 @@ class CipherSupport(Probe):
         ]
 
         if order:
-            log.info('Serial scanning {} suites in server order'.format(
+            log.info('Serial scanning {0} suites in server order'.format(
                 len(all_cipher_suites),
             ))
             while all_cipher_suites:
@@ -128,7 +128,7 @@ class CipherSupport(Probe):
             # (threaded) probing
             parallel = self.config.get('parallel', 0)
             if parallel:
-                log.info('Parallel scanning {} suites'.format(
+                log.info('Parallel scanning {0} suites'.format(
                     len(all_cipher_suites),
                 ))
                 pool = ThreadPool()
@@ -144,7 +144,7 @@ class CipherSupport(Probe):
                 pool.join()
 
             else:
-                log.info('Serial scanning {} suites'.format(
+                log.info('Serial scanning {0} suites'.format(
                     len(all_cipher_suites),
                 ))
                 for cipher_suite in reversed(all_cipher_suites):
@@ -152,7 +152,7 @@ class CipherSupport(Probe):
                         our_cipher_suites.append(cipher_suite)
 
         # Post-processing
-        log.debug('Discovered {} usable cipher suites'.format(
+        log.debug('Discovered {0} usable cipher suites'.format(
             len(our_cipher_suites),
         ))
         cipher_names = []
@@ -182,7 +182,7 @@ class CipherSupport(Probe):
             elif info['encryption_bits'] < 112:
                 info.update(dict(
                     status='error',
-                    reason='Cipher offers weak encryption, only {} bits'.format(
+                    reason='Cipher offers weak encryption, only {0} bits'.format(
                         info['encryption_bits'],
                     )
                 ))
@@ -190,7 +190,7 @@ class CipherSupport(Probe):
             elif info['encryption_bits'] < 128:
                 info.update(dict(
                     status='warning',
-                    reason='Cipher offers weak encryption, only {} bits'.format(
+                    reason='Cipher offers weak encryption, only {0} bits'.format(
                         info['encryption_bits'],
                     )
                 ))
@@ -232,10 +232,10 @@ class CipherSupport(Probe):
                 ):
                 pass
         except Exception as error:
-            log.debug('Cipher failed: {}'.format(error))
+            log.debug('Cipher failed: {0}'.format(error))
             return None
         else:
-            log.debug('Cipher accepted: {} chosen by server'.format(
+            log.debug('Cipher accepted: {0} chosen by server'.format(
                 TLS_CIPHER_SUITE[secure.server_hello.cipher_suite],
             ))
             secure.close()

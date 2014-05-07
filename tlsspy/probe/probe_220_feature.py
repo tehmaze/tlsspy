@@ -45,7 +45,7 @@ class FeatureSupport(Probe):
             secure.close()
 
         except socket.error as error:
-            raise Probe.Skip('network error: {}'.format(error))
+            raise Probe.Skip('network error: {0}'.format(error))
 
 
     def _check_features(self, address, support):
@@ -82,7 +82,7 @@ class FeatureSupport(Probe):
 
             secure.close()
         except socket.error as error:
-            raise Probe.Skip('network error: {}'.format(error))
+            raise Probe.Skip('network error: {0}'.format(error))
 
 
 PROBES = (

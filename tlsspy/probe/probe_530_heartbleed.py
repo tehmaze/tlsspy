@@ -49,7 +49,7 @@ class ProbeHeartbleed(Probe):
         try:
             remote = socket.create_connection(address)
         except socket.error as error:
-            raise Probe.Skip('network error: {}'.format(error))
+            raise Probe.Skip('network error: {0}'.format(error))
 
         if remote:
             remote.send(TLS_HELLO)
@@ -57,7 +57,7 @@ class ProbeHeartbleed(Probe):
                 try:
                     typ, version, payload = self._get_msg(remote)
                 except ValueError as error:
-                    log.debug('Oops; {}'.format(error))
+                    log.debug('Oops: {0}'.format(error))
                     remote = None
                     break
                 else:
@@ -71,7 +71,7 @@ class ProbeHeartbleed(Probe):
                 try:
                     typ, version, payload = self._get_msg(remote)
                 except ValueError as error:
-                    log.debug('Oops; {}'.format(error))
+                    log.debug('Oops: {0}'.format(error))
                     break
                 else:
                     if typ == 24:

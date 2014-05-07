@@ -40,7 +40,7 @@ def run():
             for report_type in ('html', 'json'):
                 make_report(report_type, address, result)
         except Exception as error:
-            log.error('Uncaught exception during run: {}'.format(
+            log.error('Uncaught exception during run: {0}'.format(
                 error,
             ))
             raise

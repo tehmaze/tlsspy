@@ -20,29 +20,29 @@ class ProbeHTTP(Probe):
             remote = Remote(address)
             remote.connect()
         except socket.error as error:
-            raise Probe.Skip('network error: {}'.format(
+            raise Probe.Skip('network error: {0}'.format(
                 error,
             ))
 
         try:
             remote = ssl.wrap_socket(remote)
         except socket.error as error:
-            raise Probe.Skip('TLS error: {}'.format(
+            raise Probe.Skip('TLS error: {0}'.format(
                 error,
             ))
 
         header = []
-        header.append('Host: {}'.format(address[0]))
+        header.append('Host: {0}'.format(address[0]))
         header.append('Accept: */*')
         header.append('Accept-Encoding: ')
         header.append('Cache-Control: no-cache')
         header.append('Connection: close')
-        header.append('Date: {}'.format(
+        header.append('Date: {0}'.format(
             datetime.datetime.now().strftime('%a, %d %b %Y %H:%M:%S %Z'),
         ))
         header.append('Referer: https://maze.io/')
         header.append('User-Agent: Mozilla/5.0 (TLSSpy; https://github.com/tehmaze/tlsspy)')
-        packet = 'GET /?tlsspy_probe_850_http HTTP/1.1\r\n{}\r\n\r\n'.format(
+        packet = 'GET /?tlsspy_probe_850_http HTTP/1.1\r\n{0}\r\n\r\n'.format(
             '\r\n'.join(header),
         )
 
@@ -67,7 +67,7 @@ class ProbeHTTP(Probe):
             remote.close()
 
         except socket.error as error:
-            raise Probe.Skip('network error: {}'.format(
+            raise Probe.Skip('network error: {0}'.format(
                 error,
             ))
 

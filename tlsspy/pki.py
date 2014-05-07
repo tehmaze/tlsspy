@@ -49,8 +49,8 @@ def parse_pem(obj, marker):
     if isinstance(obj, basestring):
         obj = obj.splitlines()
 
-    begin_marker = '-----BEGIN {}-----'.format(marker.upper())
-    end_marker = '-----END {}-----'.format(marker.upper())
+    begin_marker = '-----BEGIN {0}-----'.format(marker.upper())
+    end_marker = '-----END {0}-----'.format(marker.upper())
     keep = 0
     data = []
     for line in obj:
@@ -100,9 +100,9 @@ class Sequence(object):
     def to_pem(self, name=None):
         name = name or self.__class__.__name__.upper()
         data = []
-        data.append('-----BEGIN {}-----'.format(name))
+        data.append('-----BEGIN {0}-----'.format(name))
         data.append(der_encoder.encode(self.sequence).encode('base64').rstrip())
-        data.append('-----END {}-----'.format(name))
+        data.append('-----END {0}-----'.format(name))
         return '\n'.join(data)
 
 
@@ -118,11 +118,11 @@ class Certificate(Sequence):
     def __repr__(self):
         subject = self.get_subject()
         if 'commonName' in subject:
-            return '<Certificate CN={}>'.format(subject['commonName'])
+            return '<Certificate CN={0}>'.format(subject['commonName'])
         elif 'organizationName' in subject:
-            return '<Certificate O={}>'.format(subject['organizationName'])
+            return '<Certificate O={0}>'.format(subject['organizationName'])
         else:
-            return '<Certificate {}>'.format(self.get_subject_str())
+            return '<Certificate {0}>'.format(self.get_subject_str())
 
     def get_certificate_der(self):
         return der_encoder.encode(self.tbsCertificate)
@@ -141,7 +141,7 @@ class Certificate(Sequence):
                 try:
                     extension = self.get_extension(i)
                 except Warning as message:
-                    log.info('Failed to parse extension: {}'.format(w))
+                    log.info('Failed to parse extension: {0}'.format(w))
                     extension = None
 
                 if extension is not None:
@@ -297,7 +297,7 @@ class PublicKey(Sequence):
         self.algorithm = x509.ID_KA_MAP.get(algorithm)
 
         if self.algorithm is None:
-            raise TypeError('Unable to handle {} keys'.format(str(algorithm)))
+            raise TypeError('Unable to handle {0} keys'.format(str(algorithm)))
 
         key_bits = self.sequence.getComponentByName('subjectPublicKey')
         key_type = self.get_type()
@@ -336,7 +336,7 @@ class PublicKey(Sequence):
 
     def to_pem(self):
         return super(PublicKey, self).to_pem(
-            '{} PUBLIC KEY'.format(
+            '{0} PUBLIC KEY'.format(
                 self.get_type()
             )
         )
@@ -374,7 +374,7 @@ class Extension(Sequence):
         self.name = friendly_oid(self.sequence['extnID'])
         self.critical = bool(self.sequence['critical']._value)
 
-        log.debug('Parsing extension {}'.format(self.name))
+        log.debug('Parsing extension {0}'.format(self.name))
         if self.name in self.decoders:
             self.encoded = self.sequence.getComponentByName('extnValue')._value
             self.decoded = der_decoder.decode(
@@ -383,7 +383,7 @@ class Extension(Sequence):
             )[0]
 
         else:
-            warnings.warn('Not able to decode extension {}'.format(self.name))
+            warnings.warn('Not able to decode extension {0}'.format(self.name))
             self.decoded = None
 
         self.parsed = self.to_python()
@@ -404,5 +404,5 @@ class Extension(Sequence):
                 try:
                     return self.decoded.to_python()
                 except AttributeError, e:
-                    log.error('Oops: {}'.format(e))
+                    log.error('Oops: {0}'.format(e))
                     return None
