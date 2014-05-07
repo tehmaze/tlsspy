@@ -124,8 +124,8 @@ th.bits {
     </tr>
     <tr>
       <th>Expiry</th>
-      {% if analysis.expiry[0].status != 'good' %}
-      <td class="status-error">{{ analysis.expiry[0].reason }}</td>
+      {% if analysis.certificate_expiry[0].status != 'good' %}
+      <td class="status-error">{{ analysis.certificate_expiry[0].reason }}</td>
       {% else %}
       <td>Certificate date is valid</td>
       {% endif %}
@@ -204,7 +204,7 @@ th.bits {
       </tr>
     </thead>
     <tbody>
-{% for trust in analysis.trust %}
+{% for trust in analysis.certificate_trust %}
   {% set cert = report.certificates[loop.index0] %}
       <tr>
         <th>{{ loop.index }}</th>

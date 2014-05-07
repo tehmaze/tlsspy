@@ -8,10 +8,20 @@ from tlsspy.util import merge
 
 
 class Skip(Exception):
+    '''
+    Exception that can be raised anywhere from within the :func:`Probe.probe`
+    function. Will mark the probe as skipped. Can be used if for example a
+    non-fatal network error occurs or if any test criteria stop the probe from
+    functioning.
+    '''
     pass
 
 
 class Probe(object):
+    '''
+    Probe base class, to be used by all probes.
+    '''
+
     Skip = Skip
 
     def __init__(self, collected):
@@ -41,9 +51,15 @@ class Probe(object):
 
     @classmethod
     def all(cls):
+        '''
+        Returns all subclasses.
+        '''
         return cls.__subclasses__()
 
     def _connect(self, address):
+        '''
+        Setup a skeleton TLS connection without doing a handshake.
+        '''
         try:
             remote = Remote(address)
             remote.connect()
@@ -52,6 +68,10 @@ class Probe(object):
             raise Probe.Skip('Network error: {}'.format(error))
 
     def merge(self, collected, base=None):
+        '''
+        Merge new findings into the set of collected findings. This routine
+        does a recursive hash/list merge.
+        '''
         base = base or self.collected
 
         assert isinstance(collected, dict), [collected, base]
@@ -73,9 +93,21 @@ class Probe(object):
         return base
 
     def setup(self):
+        '''
+        Called by the initializor, does nothing by default.
+        '''
         pass
 
     def probe(self, address, certificates):
+        '''
+        Run the probe against the target.
+
+        :arg address: Host tuple with (``host``, ``port``), where ``host`` is an IP
+                  address in dot quad (IPv4) or hextet (IPv6 notation) and
+                  ``port`` is in numeric form.
+
+        :arg certificates: Set of :class:`tlsspy.pki.Certificate` objects.
+        '''
         return self.merge({})
 
     def warning(self, category, message):

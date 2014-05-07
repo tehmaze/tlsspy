@@ -9,6 +9,7 @@ except ImportError:
     have_dns = False
 
 from tlsspy.config import CONFIG
+from tlsspy.log import log
 from tlsspy.remote import parse_host, parse_port
 
 
@@ -48,6 +49,7 @@ class Report(object):
             separator=self.separator,
             type=self.report_type,
         )
+        self.options['host_special'] = self.get_host_special()
 
     def get_filename(self):
         return self.template.format(**self.options)
@@ -87,8 +89,11 @@ class Report(object):
             if have_dns:
                 try:
                     name = reversename.from_address(host)
-                    return str(resolver.query(name, 'PTR')[0]).rstrip('.')
-                except:
+                    name = str(resolver.query(name, 'PTR')[0]).rstrip('.')
+                    log.debug('{0} resolved to {1}'.format(host, name))
+                    return name
+                except Exception as error:
+                    log.debug('{0} failed to resolve: {1}'.format(host, error))
                     return host
             else:
                 return host
@@ -101,18 +106,32 @@ class Report(object):
             if have_dns:
                 try:
                     name = reversename.from_address(host)
-                    return str(resolver.query(name, 'PTR')[0]).rstrip('.')
-                except:
+                    name = str(resolver.query(name, 'PTR')[0]).rstrip('.')
+                    log.debug('{0} resolved to {1}'.format(host, name))
+                    return name
+                except Exception as error:
+                    log.debug('{0} failed to resolve: {1}'.format(host, error))
                     return host
             else:
-                hostname = socket.gethostbyaddr(host)[0]
-                if hostname:
-                    return hostname
+                name = socket.gethostbyaddr(host)[0]
+                if name:
+                    log.debug('{0} resolved to {1}'.format(host, name))
+                    return name
         except socket.error:
             pass
 
         # Give up
+        log.debug('{0} failed to resolve: not an IP'.format(host))
         return host
+
+    def get_host_special(self):
+        if self.options['host_name'] and \
+            self.options['host_name'] not in self.options['ip_addresses']:
+
+            return '{host_name}{separator}{ip_address}'.format(**self.options)
+
+        else:
+            return self.options['host']
 
     def get_port_name(self, port):
         if isinstance(port, basestring):
@@ -145,6 +164,9 @@ class Report(object):
         raise NotImplementedError()
 
     def open(self, encoding='ascii'):
+        log.debug('opening report {0}'.format(
+            self.filename,
+        ))
         if self.filename and self.filename != '-':
             return codecs.open(self.filename, 'wb', encoding)
         else:

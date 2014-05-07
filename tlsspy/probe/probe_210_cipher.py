@@ -43,6 +43,16 @@ class CipherSupport(Probe):
         self.config = CONFIG.get('analyze', {}).get('cipher', {})
 
     def probe(self, address, certificates):
+        '''
+        Analyze the cipher suites supported by the server. Also try to establish
+        if the server has a preferred cipher order.
+
+        Provides the following keys:
+
+        * ``analysis.ciphers``
+        * ``analysis.features``
+        * ``ciphers``
+        '''
         if address is None:
             raise Probe.Skip('offline; no address supplied')
 

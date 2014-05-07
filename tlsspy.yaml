@@ -19,13 +19,15 @@ report:
   # host:           unaltered host part of the address input
   # host_name:      resolved host name, if host part of the address input is an
   #                 IP address
+  # host_special:   contains "{host_name}{separator}{ip_address}" if host_name
+  #                 resolves, else it will be equal to "{host}"
   # ip_address:     first IP address returned when resolving host
   # port:           unaltered port part of the address input (defaults to 443 if omitted)
   # port_name:      resolved port name, if found by getservbyport(3)
   # port_special:   contains "{separator}{port}" if port is not 443/https
   # separator:      separator as specified below (defaults to "-")
   # type:           report type (html, json, etc.)
-  template:  "{host}{port_special}.{type}"
+  template:  "{host_special}{port_special}.{type}"
   separator: "-"
 
 trust:

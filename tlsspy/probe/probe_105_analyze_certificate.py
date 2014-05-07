@@ -18,6 +18,24 @@ class AnalyzeCertificate(Probe):
     '''
 
     def probe(self, address, certificates):
+        '''
+        Analyze the X.509 certificate trust chain. Parses the certificate chain
+        in top-down order (root first) and traverses the trust chain, validating
+        all individual certificates.
+
+        Provides the following keys:
+
+        * ``analysis.certificate_expiry``
+        * ``analysis.certificate_trust``
+        * ``certificates``
+
+        Probes that depend on this probe:
+
+        * 110_analyze_public_key_
+
+        .. _110_analyze_public_key: probe_110_analyze_public_key.html
+        '''
+
         self.chain      = []
         self.chain_hash = []
         self.trust      = []
@@ -54,13 +72,17 @@ class AnalyzeCertificate(Probe):
 
         return self.merge(dict(
             analysis=dict(
-                trust=self.trust[::-1],
-                expiry=self.expiry[::-1],
+                certificate_trust=self.trust[::-1],
+                certificate_expiry=self.expiry[::-1],
             ),
             certificates=self._certificates_json(certificates),
         ))
 
     def check_expiry(self, certificate):
+        '''
+        Check if the date range provided in the ``certificate`` is still valid
+        by comparing it with UTC time.
+        '''
         now = datetime.datetime.utcnow()
         if now < certificate.get_not_before():
             return dict(
@@ -76,6 +98,16 @@ class AnalyzeCertificate(Probe):
             return dict(status='good')
 
     def check_trust(self, certificate):
+        '''
+        Check if the certificate provided in ``certificate`` is trusted by:
+
+        1. checking if the certificate has a trust anchor in our trust store, if
+           so, check the certificate validity with the trust store
+        2. checking if the previous certificate was trusted and is a
+           certificate authority, if so, check the certificate validity with the
+           previously provided certificate in the chain
+        3. checking if the certificate is self signed
+        '''
         log.debug('Analyzing {}'.format(certificate.get_subject_str()))
 
         subject_hash = certificate.get_subject_hash()
@@ -171,8 +203,11 @@ class AnalyzeCertificate(Probe):
                 yield trust
 
     def _certificates_json(self, certificates_set):
-        # Transform all certificates in the chain to a ready-to-be-serialized
-        # structure
+        '''
+        Transform all certificates in the chain to a ready-to-be-serialized
+        structure (still in Python, but the keys and values are suitable to
+        feed to a serializer).
+        '''
         certificates = []
         for certificate in self.chain[::-1]:
             jsonfied = certificate.to_json()

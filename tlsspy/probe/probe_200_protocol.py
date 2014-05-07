@@ -41,6 +41,16 @@ TLS_VERSION_TOLERANCE = {
 
 @contribute_to_class(TLS_VERSION)
 class TLSVersion(object):
+    '''
+    TLS version tuples, consisting of (``major``, ``minor``) version numbers.
+
+    :ivar SSLv2: SSL version 2
+    :ivar SSLv3: SSL version 3
+    :ivar TLSv1_0: TLS version 1.0
+    :ivar TLSv1_1: TLS version 1.1
+    :ivar TLSv1_2: TLS version 1.2
+    :ivar TLSv1_3_draft: TLS version 1.3 (draft)
+    '''
     pass
 
 
@@ -75,6 +85,32 @@ class ProtocolSupport(Probe):
     timeout = 15
 
     def probe(self, address, certificates):
+        '''
+        Analyze the available protocol versions and protocol intolerance. The
+        TLS protocol negotiates what protocol version to use like so:
+
+        1. The client initiates a TLS handshake, sending a ClientHello packet,
+           including the highest protocol version it supports.
+        2. The server responds with a ServerHello packet, indicating the higest
+           protocol version it supports, but no higher than the version
+           requested by the client. If the Server not not willing to support
+           older versions, it will respond with an Alert packet in stead.
+
+        So if the client were to request a hypothetical TLSv2.0 (``0x4000``)
+        protocol version, and the server supports up to TLSv1.2 (``0x0303``),
+        it should reply with version ``0x0303``. Unfortunately a lot of TLS/SSL
+        stacks are broken and respond with an incorrect version, called protocol
+        version intolerance. This may lead to interoperability issues for
+        clients that support newer versions of the protocol. If the server
+        claims to support newer versions, but it doesn't know how to properly
+        respond to the ClientHello, the handshake setup may fail and the client
+        might not be able to connect.
+
+        Provides the following keys:
+
+        * ``analysis.protocol_intolerance``
+        * ``analysis.protocols``
+        '''
         if address is None:
             raise Probe.Skip('offline; no address supplied')
 
@@ -141,6 +177,10 @@ class ProtocolSupport(Probe):
         '''
         Returns the version supported by the server for client version
         ``version``.
+
+        :arg address: address tuple
+        :arg version: version tuple, consisting of (``major``, ``minor``)
+                      version numbers
         '''
         log.debug('Testing TLS/SSL version 0x{:02x}{:02x}'.format(*version))
         chello = ClientHello()

@@ -1,3 +1,6 @@
+import itertools
+
+
 def dict_key(k):
     k = str(k).replace('.', '_')
     return k
@@ -403,6 +406,8 @@ TLS_CIPHER_SUITE = {
 0x00c0af: 'TLS_ECDHE_ECDSA_WITH_AES_256_CCM_8',
 }
 
+TLS_CIPHER_SUITE_MAP = dict((v, k) for k, v in TLS_CIPHER_SUITE.iteritems())
+
 SSL_CIPHER_SUITE = {
 0x010080: 'SSL2_RC4_128_WITH_MD5',
 0x020080: 'SSL2_RC4_128_EXPORT40_WITH_MD5',
@@ -417,7 +422,7 @@ SSL_CIPHER_SUITE = {
 TLS_CIPHER_SUITE_HEAD = ('protocol', 'key_exchange', 'authentication',
                          'encryption', 'encryption_bits', 'mac')
 TLS_CIPHER_SUITE_INFO = {
-#       Prot  Key exchange  Authentication Encryption        Bits Mac
+#         Prot      Key exchange  Authentication Encryption        Bits Mac
 0x000000:('TLSv1.0',None,         None,          None,             0,   None    ),
 0x000001:('TLSv1.0','RSA',        'RSA',         None,             0,   'MD5'   ),
 0x000002:('TLSv1.0','RSA',        'RSA',         None,             0,   'SHA'   ),
@@ -792,6 +797,32 @@ class CipherSuite(object):
                     if TLS_CIPHER_SUITE_INFO[cipher][index] == value
                 ]
         return ciphers
+
+
+def _encryption(cipher):
+    return lambda e: e and (e == cipher or e.startswith(cipher + '_'))
+
+
+# Collections of suites
+CipherSuite.TripleDES = CipherSuite.filter(encryption=_encryption('3DES'))
+CipherSuite.AES128    = CipherSuite.filter(encryption=_encryption('AES_128'))
+CipherSuite.AES256    = CipherSuite.filter(encryption=_encryption('AES_256'))
+CipherSuite.RC4       = CipherSuite.filter(encryption=_encryption('RC4'))
+CipherSuite.SHA       = CipherSuite.filter(mac='SHA')
+CipherSuite.MD5       = CipherSuite.filter(mac='MD5')
+CipherSuite.ANON      = CipherSuite.filter(authentication=None)
+
+# Simple groups of suites
+CipherSuite.all       = TLS_CIPHER_SUITE.keys()
+CipherSuite.basic     = list(itertools.chain.from_iterable((
+    CipherSuite.TripleDES,
+    CipherSuite.AES128,
+    CipherSuite.AES256,
+    CipherSuite.RC4,
+    CipherSuite.SHA,
+    CipherSuite.MD5,
+    CipherSuite.ANON,
+)))
 
 
 TLS_CERTIFICATE_TYPE = {

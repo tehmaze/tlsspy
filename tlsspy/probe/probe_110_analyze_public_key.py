@@ -13,6 +13,22 @@ class AnalyzePubKey(Probe):
         self.config = CONFIG.get('analyze', {}).get('public_key', {})
 
     def probe(self, address, certificates):
+        '''
+        Analyze the public key for each certificate in the ``certificates`` set.
+
+        Provides the following keys:
+
+        * ``analysis.public_keys``
+
+        Uses the following configuration keys:
+
+        * ``analyze.public_key.key_sizes``, which is a dictionary, containing:
+
+          * key type, which is a dictionary, containing:
+
+            * ``bits``, minimal number of security bits in the key
+            * ``docs``, reference to the minimal size documentation
+        '''
         key_infos = []
         warnings  = defaultdict(list)
         errors    = defaultdict(list)
