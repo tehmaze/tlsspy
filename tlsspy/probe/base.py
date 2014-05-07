@@ -11,7 +11,7 @@ class Skip(Exception):
     '''
     Exception that can be raised anywhere from within the :func:`Probe.probe`
     function. Will mark the probe as skipped. Can be used if for example a
-    non-fatal network error occurs or if any test criteria stop the probe from
+    non-fatal Network error occurs or if any test criteria stop the probe from
     functioning.
     '''
     pass

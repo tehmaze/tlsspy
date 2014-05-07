@@ -20,7 +20,7 @@ class ProbeHTTP(Probe):
             remote = Remote(address)
             remote.connect()
         except socket.error as error:
-            raise Probe.Skip('network error: {0}'.format(
+            raise Probe.Skip('Network error: {0}'.format(
                 error,
             ))
 
@@ -50,7 +50,7 @@ class ProbeHTTP(Probe):
             while packet:
                 sent = remote.send(packet)
                 if sent == 0:
-                    raise Probe.Skip('network error: remote host disconnected')
+                    raise Probe.Skip('Network error: remote host disconnected')
                 else:
                     packet = packet[sent:]
 
@@ -67,7 +67,7 @@ class ProbeHTTP(Probe):
             remote.close()
 
         except socket.error as error:
-            raise Probe.Skip('network error: {0}'.format(
+            raise Probe.Skip('Network error: {0}'.format(
                 error,
             ))
 

@@ -49,7 +49,7 @@ class ProbeHeartbleed(Probe):
         try:
             remote = socket.create_connection(address)
         except socket.error as error:
-            raise Probe.Skip('network error: {0}'.format(error))
+            raise Probe.Skip('Network error: {0}'.format(error))
 
         if remote:
             remote.send(TLS_HELLO)
