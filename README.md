@@ -24,7 +24,7 @@ We support various SSL and TLS versions:
 We support various TLS extensions:
 
  * [RFC 4492][rfc-4492]: Elliptic Curves, EC Point Formats
- * [RFC 4507][rrc-4507]: Session Ticket
+ * [RFC 4507][rfc-4507]: Session Ticket
  * [RFC 5246][rfc-5246]: Signature Algorithms
  * [RFC 5746][rfc-5746]: Renegotiation
  * [RFC 6066][rfc-6066]: Server Name Indication (SNI), Status Request
