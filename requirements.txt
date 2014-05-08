@@ -1,4 +1,3 @@
 Jinja2
 pyasn1
-pyOpenSSL
 PyYAML

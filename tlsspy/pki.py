@@ -17,13 +17,6 @@ from tlsspy.crypto import md2, ripemd160
 from tlsspy.log import log
 from tlsspy.oids import friendly_oid
 
-try:
-    from OpenSSL.crypto import verify as SSLVerify
-except ImportError:
-    log.warning('Please upgrade your pyOpenSSL installation, this version has '
-                'no support for certificate verification!')
-    SSLVerify = None
-
 
 def parse_pem(obj, marker):
     '''
