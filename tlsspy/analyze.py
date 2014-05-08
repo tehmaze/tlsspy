@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import traceback
 
 from pyasn1.type import univ
 from pyasn1.codec.der import decoder as der_decoder
@@ -38,9 +39,10 @@ class Analyzer(object):
             except Probe.Skip, r:
                 log.warning('Skip {0}: {1}'.format(Probe.__module__, r))
                 info['tests_skipped'].append(Probe.__module__)
-            except Exception, e:
-                print('Oops: {0}'.format(e))
-                raise
+            except Exception as error:
+                log.error('Uncaught exception: {0}'.format(error))
+                for line in traceback.format_exc().splitlines():
+                    log.error(line)
 
         return info
 
