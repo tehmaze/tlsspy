@@ -5,13 +5,6 @@ from pyasn1.codec.der import decoder as der_decoder
 from pyasn1.codec.der import encoder as der_encoder
 from pyasn1.error import PyAsn1Error
 from pyasn1.type import univ
-from OpenSSL.crypto import (
-    dump_certificate,
-    load_certificate,
-    FILETYPE_ASN1,
-    FILETYPE_PEM,
-)
-from OpenSSL.crypto import Error as SSLError
 
 from tlsspy.asn1_models import (
     dsa,
@@ -20,6 +13,7 @@ from tlsspy.asn1_models import (
     x509,
     x509_extension,
 )
+from tlsspy.crypto import md2, ripemd160
 from tlsspy.log import log
 from tlsspy.oids import friendly_oid
 
@@ -31,20 +25,14 @@ except ImportError:
     SSLVerify = None
 
 
-def hash_name(name):
-    hashed = hashlib.sha1()
-    digest = hashed.digest()
-    return '{:08x}'.format((
-        ord(digest[0]) |
-        ((ord(digest[1]) << 8))  |
-        ((ord(digest[2]) << 16)) |
-        ((ord(digest[4]) << 24))
-        ) & 0xffffffffL
-    )
-
-
 def parse_pem(obj, marker):
-    '''Retrieve all maching data blocks in a PEM formatted file.'''
+    '''
+    Retrieve all maching data blocks in a PEM formatted file.
+
+    :arg marker: PEM block marker (eg ``'CERTIFICATE'``)
+
+    :return: generator
+    '''
 
     if isinstance(obj, basestring):
         obj = obj.splitlines()
@@ -68,6 +56,12 @@ def parse_pem(obj, marker):
 
 
 def parse_certificate(substrate):
+    '''
+    Parse the internal structure of a DER encoded substrate.
+
+    :arg substrate: DER encoded certificate substrate
+    :return: :class:`Certificate` object
+    '''
     decoded, leftover = der_decoder.decode(
         substrate,
         asn1Spec=x509.Certificate()
@@ -86,6 +80,11 @@ def parse_ocsp_response(substrate):
 
 
 class Sequence(object):
+    '''
+    Base class for ASN.1 encoded sequence objects.
+
+    :ivar spec: ASN.1 specification
+    '''
     spec = None
 
     def __init__(self, sequence):
@@ -95,9 +94,15 @@ class Sequence(object):
             self.sequence = sequence
 
     def to_der(self):
+        '''
+        :return: DER encoded sequence
+        '''
         return der_encoder.encode(self.sequence)
 
     def to_pem(self, name=None):
+        '''
+        :return: PEM encoded sequence
+        '''
         name = name or self.__class__.__name__.upper()
         data = []
         data.append('-----BEGIN {0}-----'.format(name))
@@ -107,6 +112,11 @@ class Sequence(object):
 
 
 class Certificate(Sequence):
+    '''
+    X.509 certificate object.
+
+    :arg sequence: ASN.1 encoded sequence object
+    '''
     spec = x509.Certificate()
 
     def __init__(self, sequence):
@@ -125,14 +135,24 @@ class Certificate(Sequence):
             return '<Certificate {0}>'.format(self.get_subject_str())
 
     def get_certificate_der(self):
+        '''
+        :return: DER encoded tbsCertificate sequence.
+        '''
         return der_encoder.encode(self.tbsCertificate)
 
     def get_extension(self, index):
+        '''
+        :arg index: extension index
+        :return: :class:`Extension` object
+        '''
         return Extension(
             self.sequence['tbsCertificate']['extensions'][index]
         )
 
     def get_extensions(self):
+        '''
+        :return: a list of :class:`Extension` objects
+        '''
         if hasattr(self, 'extensions'):
             return self.extensions
         else:
@@ -150,6 +170,9 @@ class Certificate(Sequence):
             return extensions
 
     def get_extension_count(self):
+        '''
+        :return: the number of extensions in the certificate
+        '''
         try:
             return len(self.tbsCertificate.getComponentByName('extensions'))
         except PyAsn1Error:
@@ -157,16 +180,57 @@ class Certificate(Sequence):
         except TypeError:
             return 0
 
+    def get_hash(self):
+        '''
+        :return: cryptographic hash of the tbsCertificate sequence
+        '''
+        signature_algorithm = self.get_signature_algorithm()
+        algorithm = signature_algorithm.replace('WithRSAEncryption', '')
+        log.debug('Generating hashed value for {0}'.format(
+            algorithm,
+        ))
+
+        data = der_encoder.encode(self.tbsCertificate)
+        if algorithm == 'md2':
+            return md2.MD2(data).digest()
+        elif algorithm == 'md5':
+            return hashlib.md5(data).digest()
+        elif algorithm == 'ripemd160':
+            return ripemd160.RIPEMD160(data).digest()
+        elif algorithm == 'sha1':
+            return hashlib.sha1(data).digest()
+        elif algorithm == 'sha224':
+            return hashlib.sha224(data).digest()
+        elif algorithm == 'sha256':
+            return hashlib.sha256(data).digest()
+        elif algorithm == 'sha384':
+            return hashlib.sha384(data).digest()
+        elif algorithm == 'sha512':
+            return hashlib.sha512(data).digest()
+        else:
+            log.error('Unsupported signature algorithm: {0}'.format(
+                signature_algorithm,
+            ))
+            return None
+
     def get_issuer(self):
+        '''
+        :return: dictionary of issuer components
+        '''
         return self.tbsCertificate.getComponentByName('issuer').to_python()
 
     def get_issuer_der(self):
+        '''
+        :return: DER encoded issuer sequence
+        '''
         return der_encoder.encode(
             self.tbsCertificate.getComponentByName('issuer')
         )
 
     def get_issuer_hash(self):
-        #return hash_name(self.get_issuer())
+        '''
+        :return: SHA1 hash of the DER encoded issuer sequence
+        '''
         return hashlib.sha1(self.get_issuer_der()).hexdigest()
 
     def get_issuer_hash_old(self):
@@ -176,36 +240,65 @@ class Certificate(Sequence):
         return self.tbsCertificate.getComponentByName('issuer').to_rfc2253()
 
     def get_not_after(self):
+        '''
+        :return: :py:class:`datetime.date`
+        '''
         return self.validity.getComponentByName('notAfter').to_python()
 
     def get_not_before(self):
+        '''
+        :return: :py:class:`datetime.date`
+        '''
         return self.validity.getComponentByName('notBefore').to_python()
 
     def get_public_key(self):
-        return PublicKey(
-            self.tbsCertificate.getComponentByName('subjectPublicKeyInfo')
-        )
+        '''
+        :return: :class:`PublicKey` object
+        '''
+        if not hasattr(self, 'public_key'):
+            self.public_key = PublicKey(
+                self.tbsCertificate.getComponentByName('subjectPublicKeyInfo')
+            )
+        return self.public_key
 
     def get_serial_number(self):
+        '''
+        :return: certificate serial number
+        '''
         self.tbsCertificate.getComponentByName('serialNumber').to_python()
 
     def get_signature(self):
+        '''
+        :return: certificate signature
+        '''
         return self.sequence.getComponentByName('signatureValue').to_bytes()
 
     def get_signature_algorithm(self):
+        '''
+        :return: human readable signature algorithm
+        '''
         signature = self.sequence.getComponentByName('signatureAlgorithm')
         algorithm = signature['algorithm']
         return friendly_oid(algorithm)
 
     def get_signature_der(self):
+        '''
+        :return: DER encoded signature sequence
+        '''
         return der_encoder.encode(
             self.sequence.getComponentByName('signatureValue')
         )
 
     def get_subject(self):
+        '''
+        :return: dictionary of subject components
+        '''
         return self.tbsCertificate.getComponentByName('subject').to_python()
 
     def get_subject_alternative(self, types=('dNSName', 'iPAddress')):
+        '''
+        :return: list of alternative names
+        '''
         extensions = self.get_extensions()
         subject = self.get_subject()
         skips = []
@@ -221,6 +314,9 @@ class Certificate(Sequence):
         return names
 
     def get_subject_der(self):
+        '''
+        :return: DER encoded subject sequence
+        '''
         return der_encoder.encode(
             self.tbsCertificate.getComponentByName('subject')
         )
@@ -237,7 +333,6 @@ class Certificate(Sequence):
     @property
     def is_ca(self):
         extensions = self.get_extensions()
-        print extensions
         if 'basicConstraints' in extensions:
             basicConstraints = extensions['basicConstraints'].to_python()
             return basicConstraints.get('ca', False)
@@ -245,6 +340,9 @@ class Certificate(Sequence):
             return False
 
     def to_json(self):
+        '''
+        :return: certificate information ready to be serialized
+        '''
         extensions = {}
 
         for name, extension in self.get_extensions().iteritems():
@@ -269,25 +367,40 @@ class Certificate(Sequence):
         )
 
     def verify(self, certificate):
-        '''Meh it sucks having to load OpenSSL; but it's the fastest option.'''
-        if SSLVerify is None:
-            return None
+        '''
+        Verify the signature of ``certificate`` using the public key listed for
+        this certificate.
 
-        vrfy = load_certificate(FILETYPE_ASN1, self.to_der())
-        try:
-            SSLVerify(
-                vrfy,
-                certificate.get_signature(),
-                certificate.get_certificate_der(),
-                certificate.get_signature_algorithm(),
-            )
-        except SSLError:
+        >>> issuer = Certificate(...)
+        >>> victim = Certificate(...)
+        >>> issuer.verify(victim)
+        True
+        '''
+        # Don't bother verifying if we're not a CA certificate
+        if not self.is_ca:
+            log.debug('Attempted to verify from non-CA certificate')
             return False
-        else:
-            return True
+
+        # Make sure this certificate is suitable for signing
+        extensions = dict((k, v.to_python())
+                          for k, v in self.get_extensions().iteritems())
+        if not 'keyCertSign' in extensions.get('keyUsage', []):
+            log.debug(
+                'Attempted to verify from certificate not suitable for signing'
+            )
+            return False
+
+        return self.get_public_key().verify(
+            certificate.get_signature(),
+            certificate.get_hash(),
+            certificate.get_signature_algorithm(),
+        )
 
 
 class PublicKey(Sequence):
+    '''
+    Public key object.
+    '''
     spec = x509.SubjectPublicKeyInfo()
 
     def __init__(self, sequence):
@@ -308,12 +421,23 @@ class PublicKey(Sequence):
             self.key, _ = self._get_RSA_public_key(key_bits)
 
     def get_bits(self):
+        '''
+        Get the number of encryption bits for this key.
+
+        :return: int
+        '''
         return self.key.get_bits()
 
     def get_type(self):
+        '''
+        Get the algorithm name.
+        '''
         return self.algorithm.split('+')[0]
 
     def to_json(self):
+        '''
+        :return: public key information ready to be serialized
+        '''
         key_type = self.get_type()
         key_info = dict(
             bits=self.get_bits(),
@@ -335,6 +459,9 @@ class PublicKey(Sequence):
         return key_info
 
     def to_pem(self):
+        '''
+        :return: PEM encoded public key
+        '''
         return super(PublicKey, self).to_pem(
             '{0} PUBLIC KEY'.format(
                 self.get_type()
@@ -351,9 +478,21 @@ class PublicKey(Sequence):
         pub = key_bits.to_bytes()
         return der_decoder.decode(pub, asn1Spec=key)
 
+    def verify(self, signature, value, signature_algorithm):
+        '''
+        Verify the signature of ``value`` using this public key.
+
+        :return: bool
+        '''
+        return self.key.verify(signature, value, signature_algorithm)
+
 
 class Extension(Sequence):
-    decoders = dict(
+    '''
+    Certificate extension object.
+    '''
+
+    _decoders = dict(
         authorityInfoAccess    = x509_extension.AuthorityInfoAccess(),
         authorityKeyIdentifier = x509_extension.AuthorityKeyIdentifier(),
         basicConstraints       = x509_extension.BasicConstraints(),
@@ -375,11 +514,11 @@ class Extension(Sequence):
         self.critical = bool(self.sequence['critical']._value)
 
         log.debug('Parsing extension {0}'.format(self.name))
-        if self.name in self.decoders:
+        if self.name in self._decoders:
             self.encoded = self.sequence.getComponentByName('extnValue')._value
             self.decoded = der_decoder.decode(
                 self.encoded,
-                asn1Spec=self.decoders[self.name]
+                asn1Spec=self._decoders[self.name]
             )[0]
 
         else:

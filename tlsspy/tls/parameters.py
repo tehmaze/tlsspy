@@ -2,11 +2,27 @@ import itertools
 
 
 def dict_key(k):
+    '''
+    Transform input to be somewhat suitable as a class attribute. Not at all
+    fool-proof.
+    '''
     k = str(k).replace('.', '_')
     return k
 
 
 def contribute_to_class(dct):
+    '''
+    Read the keys and values from a dictionary, turning the values into class
+    attributes with the keys as value.
+
+    >>> test = {'foo': 'bar'}
+    >>> @contribute_to_class
+    ... class Test(object):
+    ...     pass
+    ...
+    >>> Test.bar
+    'foo'
+    '''
     def decorated(cls):
         for k, v in dct.iteritems():
             if not v:
@@ -56,6 +72,9 @@ TLS_ALERT_DESCRIPTION = {
 
 @contribute_to_class(TLS_ALERT_DESCRIPTION)
 class AlertDescription(object):
+    '''
+    TLS Alert Registry, as per :rfc:`5246`.
+    '''
     pass
 
 
@@ -82,6 +101,9 @@ TLS_AUTHORIZATION_DATA = {
 
 @contribute_to_class(TLS_AUTHORIZATION_DATA)
 class AuthorizationData(object):
+    '''
+    TLS authorization data formats, as per :rfc:`5878` and :rfc:`6042`.
+    '''
     pass
 
 
@@ -769,6 +791,12 @@ TLS_CIPHER_SUITE_INFO = {
 
 @contribute_to_class(TLS_CIPHER_SUITE)
 class CipherSuite(object):
+    '''
+    TLS cipher suite registry, as per :rfc:`2712`, :rfc:`4162`, :rfc:`4346`,
+    :rfc:`5246`, :rfc:`5288`, :rfc:`5289`, :rfc:`5469`, :rfc:`5487`,
+    :rfc:`5489`, :rfc:`5746`, :rfc:`5932`, :rfc:`6209`, :rfc:`6347`,
+    :rfc:`6367` and :rfc:`6655`.
+    '''
     @classmethod
     def filter(cls, **filters):
         indices = []
@@ -802,16 +830,30 @@ def _encryption(cipher):
 
 
 # Collections of suites
-CipherSuite.TripleDES = CipherSuite.filter(encryption=_encryption('3DES'))
-CipherSuite.AES128    = CipherSuite.filter(encryption=_encryption('AES_128'))
-CipherSuite.AES256    = CipherSuite.filter(encryption=_encryption('AES_256'))
-CipherSuite.RC4       = CipherSuite.filter(encryption=_encryption('RC4'))
-CipherSuite.SHA       = CipherSuite.filter(mac='SHA')
-CipherSuite.MD5       = CipherSuite.filter(mac='MD5')
-CipherSuite.ANON      = CipherSuite.filter(authentication=None)
+CipherSuite.TripleDES = CipherSuite.filter(
+    encryption=_encryption('3DES')
+)  #: All cipher suites with 3DES encryption
+CipherSuite.AES128    = CipherSuite.filter(
+    encryption=_encryption('AES_128')
+)  #: All cipher suites with AES-128 encryption
+CipherSuite.AES256    = CipherSuite.filter(
+    encryption=_encryption('AES_256')
+)  #: All cipher suites with AES-256 encryption
+CipherSuite.RC4       = CipherSuite.filter(
+    encryption=_encryption('RC4')
+)  #: All cipher suites with RC4 encryption
+CipherSuite.SHA       = CipherSuite.filter(
+    mac='SHA'
+)  #: All cipher suites with SHA mac
+CipherSuite.MD5       = CipherSuite.filter(
+    mac='MD5'
+)  #: All cipher suites with MD5 mac
+CipherSuite.ANON      = CipherSuite.filter(
+    authentication=None
+)  #: All cipher suites without authentication
 
 # Simple groups of suites
-CipherSuite.all       = TLS_CIPHER_SUITE.keys()
+CipherSuite.all       = TLS_CIPHER_SUITE.keys()  #: All available cipher suites
 CipherSuite.basic     = list(itertools.chain.from_iterable((
     CipherSuite.TripleDES,
     CipherSuite.AES128,
@@ -820,7 +862,7 @@ CipherSuite.basic     = list(itertools.chain.from_iterable((
     CipherSuite.SHA,
     CipherSuite.MD5,
     CipherSuite.ANON,
-)))
+)))  #: All basic cipher suites
 
 
 TLS_CERTIFICATE_TYPE = {
@@ -861,6 +903,10 @@ TLS_CLIENT_CERTIFICATE_TYPE = {
 
 @contribute_to_class(TLS_CLIENT_CERTIFICATE_TYPE)
 class ClientCertificateType(object):
+    '''
+    TLS certificate type identifiers registry, as per :rfc:`4492` and
+    :rfc:`5246`.
+    '''
     pass
 
 
@@ -875,6 +921,9 @@ TLS_CONTENT_TYPE = {
 
 @contribute_to_class(TLS_CONTENT_TYPE)
 class ContentType(object):
+    '''
+    TLS content type registry, as per :rfc:`5246` and :rfc:`6520`.
+    '''
     all = tuple(TLS_CONTENT_TYPE)
 
 
@@ -914,6 +963,9 @@ TLS_EC_CURVE_NAME = {
 
 @contribute_to_class(TLS_EC_CURVE_NAME)
 class ECCurveName(object):
+    '''
+    EC named curve registry, as per :rfc:`4492` and ;rfc:`7027`.
+    '''
     pass
 
 
@@ -926,6 +978,9 @@ TLS_EC_POINT_FORMAT = {
 
 @contribute_to_class(TLS_EC_POINT_FORMAT)
 class ECPointFormat(object):
+    '''
+    EC point format registry, as per :rfc:`4492`.
+    '''
     pass
 
 
@@ -938,6 +993,9 @@ TLS_EC_CURVE_TYPE = {
 
 @contribute_to_class(TLS_EC_CURVE_TYPE)
 class ECCurveType(object):
+    '''
+    EC point format registry, as per :rfc:`4492`.
+    '''
     pass
 
 
@@ -984,6 +1042,9 @@ TLS_HEARTBEAT_TYPE = {
 
 @contribute_to_class(TLS_HEARTBEAT_TYPE)
 class HeartbeatType(object):
+    '''
+    Heartbeat message types, as per :rfc:`6520`.
+    '''
     pass
 
 
@@ -995,6 +1056,9 @@ TLS_HEARTBEAT_MODE = {
 
 @contribute_to_class(TLS_HEARTBEAT_MODE)
 class HeartbeatMode(object):
+    '''
+    Heartbeat modes, as per :rfc:`6520`.
+    '''
     pass
 
 
@@ -1020,6 +1084,10 @@ TLS_HANDSHAKE_TYPE = {
 
 @contribute_to_class(TLS_HANDSHAKE_TYPE)
 class HandshakeType(object):
+    '''
+    TLS handshake type registry, as per :rfc:`4507`, :rfc:`4680`, :rfc:`5246`
+    and :rfc:`6066`.
+    '''
     pass
 
 
@@ -1036,6 +1104,9 @@ TLS_HASH_ALGORITHM = {
 
 @contribute_to_class(TLS_HASH_ALGORITHM)
 class HashAlgorithm(object):
+    '''
+    TLS hash algorithm registry, as per :rfc:`5246`.
+    '''
     pass
 
 

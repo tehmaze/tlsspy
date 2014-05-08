@@ -1,4 +1,9 @@
-TLS_EC_CURVE_NAME_HEAD = ('name', 'type', 'field', 'key_size')
+TLS_EC_CURVE_NAME_HEAD = (
+    'name',
+    'type',
+    'field',
+    'key_size'
+)  #: Field header names for :attr:`TLS_EC_CURVE_NAME_INFO`
 TLS_EC_CURVE_NAME_INFO = {
     # RFC 4492
     0x0001: ('sect163k1',       'NIST/SECG/WTLS', 'binary', 163),
@@ -30,7 +35,7 @@ TLS_EC_CURVE_NAME_INFO = {
     0x001a: ('brainpoolP256r1', 'ECC',            'prime',  256),
     0x001b: ('brainpoolP384r1', 'ECC',            'prime',  384),
     0x001c: ('brainpoolP512r1', 'ECC',            'prime',  512),
-}
+}  #: Named elliptic curve information
 
 # Unsafe criteria, are as follows:
 # 1. Key size should be at least suitable for "medium-term protection", main
@@ -73,4 +78,4 @@ TLS_EC_CURVE_NAME_UNSAFE = {
              'http://safecurves.cr.yp.to/'),
     0x001b: ('Unsafe ECC security',
              'http://safecurves.cr.yp.to/'),
-}
+}  #: Unsafe named elliptic curves

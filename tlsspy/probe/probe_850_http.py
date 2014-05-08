@@ -9,10 +9,14 @@ from tlsspy.remote import Remote
 
 
 class ProbeHTTP(Probe):
-    '''
-    Does a full HTTP request to gather information about the web server.
-    '''
     def probe(self, address, certificates):
+        '''
+        Does a full HTTP request to gather information about the web server.
+
+        Provides the following keys:
+
+        * ``features.http``
+        '''
         if address is None:
             raise Probe.Skip('offline; no address supplied')
 

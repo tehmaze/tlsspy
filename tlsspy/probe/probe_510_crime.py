@@ -4,6 +4,15 @@ from tlsspy.tls.connection import Connection
 
 class ProbeCRIME(Probe):
     def probe(self, address, certificates):
+        '''
+        Tests for the CRIME (Compression Ration Info-leak Made Easy) TLS attack
+        which targets protocols that also enable data compression. CRIME allows
+        for session hijacking on an authenticated web session.
+
+        Provides the following keys:
+
+        * ``weakness.crime``
+        '''
         weakness = {}
         weakness['status'] = 'good'
         weakness['exists'] = False

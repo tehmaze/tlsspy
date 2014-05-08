@@ -38,6 +38,15 @@ TLS_HEARTBEAT = h2bin('''
 
 class ProbeHeartbleed(Probe):
     def probe(self, address, certificates):
+        '''
+        Tests for the Heartbleed TLS attack which targets protocols that have
+        the heartbeat extension enabled and do improper boundary checks, such
+        as found in OpenSSL versions between 1.0.1 - 1.0.1f.
+
+        Provides the following keys:
+
+        * ``weakness.heartbleed``
+        '''
         if address is None:
             raise Probe.Skip('offline; no address supplied')
 

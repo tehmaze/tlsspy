@@ -1,16 +1,19 @@
 import codecs
+import os
 import socket
 import sys
-
-try:
-    from dns import resolver, reversename
-    have_dns = True
-except ImportError:
-    have_dns = False
 
 from tlsspy.config import CONFIG
 from tlsspy.log import log
 from tlsspy.remote import parse_host, parse_port
+
+try:
+    if 'SKIP_DNS' in os.environ:
+        raise ImportError()
+    from dns import resolver, reversename
+    have_dns = True
+except ImportError:
+    have_dns = False
 
 
 class Report(object):
